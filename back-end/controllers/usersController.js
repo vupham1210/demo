@@ -1,6 +1,6 @@
-const User = require("../model/User");
+import { User } from '../model/User.js';
 
-const getAllUsers = async (req, res, next) => {
+export const getAllUsers = async (req, res, next) => {
   let users;
   try {
     users = await User.find();
@@ -14,7 +14,7 @@ const getAllUsers = async (req, res, next) => {
   return res.status(200).json({ users });
 };
 
-const getById = async (req, res, next) => {
+export const getById = async (req, res, next) => {
   const id = req.params.id;
   let user;
   try {
@@ -28,7 +28,7 @@ const getById = async (req, res, next) => {
   return res.status(200).json({ user });
 };
 
-const addUser = async (req, res, next) => {
+export const addUser = async (req, res, next) => {
   const { username, password, email, phone, address, image } = req.body;
   let user;
   try {
@@ -51,7 +51,7 @@ const addUser = async (req, res, next) => {
   return res.status(201).json({ user });
 };
 
-const updateUser = async (req, res, next) => {
+export const updateUser = async (req, res, next) => {
   const id = req.params.id;
   const { username, password, email, phone, address, image } = req.body;
   let user;
@@ -74,7 +74,7 @@ const updateUser = async (req, res, next) => {
   return res.status(200).json({ user });
 };
 
-const deleteUser = async (req, res, next) => {
+export const deleteUser = async (req, res, next) => {
   const id = req.params.id;
   let user;
   try {
@@ -87,9 +87,3 @@ const deleteUser = async (req, res, next) => {
   }
   return res.status(200).json({ message: "User Successfully Deleted" });
 };
-
-exports.getAllUsers = getAllUsers;
-exports.addUser = addUser;
-exports.getById = getById;
-exports.updateUser = updateUser;
-exports.deleteUser = deleteUser;
