@@ -1,5 +1,6 @@
-import { User } from '../model/User.js';
 import md5 from 'md5';
+import jwt from 'jsonwebtoken';
+import { User } from '../model/User.js';
 
 export const getAllUsers = async (req, res, next) => {
   console.log('All User')
@@ -16,18 +17,58 @@ export const getAllUsers = async (req, res, next) => {
    return res.status(200).json({ users });
 };
 
+export const updateRefreshToken = async (username, refreshToken) => {
+	try {
+    await User.findOneAndUpdate({ username: username },{ refreshToken: refreshToken });
+		return true;
+	} catch {
+		return false;
+	} 
+};
+
 export const getById = async (req, res, next) => {
-  const id = req.params.id;
+
+  let response = {
+    title: "Lỗi xảy ra",
+    message: "Đã có lỗi xảy ra trong quá trình đăng nhập, xin vui lòng thử lại!",
+    type: 'warning',
+    error: true,
+  };
+
+  const { username, password } = req.body;
+
   let user;
   try {
-    user = await User.findById(id);
+    user = await User.findOne({ username: username, password: md5(password) });
   } catch (err) {
     console.log(err);
   }
   if (!user) {
-    return res.status(404).json({ message: "No User found" });
+    response = {
+      title: "Lỗi xảy ra",
+      message: "Sai tên đăng nhập hoặc mật khẩu!",
+      type: 'warning',
+      error: true,
+    };
+    return res.status(201).json(response);
+  } else {
+
+    const generatedToken = generateToken(user.username, user.email);
+
+    response = {
+      title: "Thành công",
+      message: "Đăng nhập thành công!",
+      type: 'success',
+      error: true,
+      user: {
+        user_name: user.username,
+        user_email: user.email,
+        token: generatedToken.token,
+        refreshToken: generatedToken.refreshtoken
+      },
+    };
   }
-  return res.status(200).json({ user });
+  return res.status(200).json(response);
 };
 
 export const addUser = async (req, res, next) => {
@@ -44,7 +85,7 @@ export const addUser = async (req, res, next) => {
     user = new User({
       username:username,
       password:md5(password),
-      email:email,
+      email:email.toLowerCase(),
       phone:phone,
       role:role,
     });
@@ -77,20 +118,16 @@ export const addUser = async (req, res, next) => {
 };
 
 export const updateUser = async (req, res, next) => {
-  const id = req.params.id;
-  const { username, password, email, phone, address, image } = req.body;
+  
+  const { username, password, email} = req.body;
+  
   let user;
   try {
-    user = await User.findByIdAndUpdate(id, {
-        username,
-        password,
-        email,
-        phone,
-        address,
-        role,
-        image,
+   user = await User.findOneAndUpdate({username: username}, {
+        username:username,
+        password:password,
+        email:email,
     });
-    user = await user.save();
   } catch (err) {
     console.log(err);
   }
@@ -113,3 +150,78 @@ export const deleteUser = async (req, res, next) => {
   }
   return res.status(200).json({ message: "User Successfully Deleted" });
 };
+
+// Generate Token
+export const generateToken = (username, email) => {
+	try {
+    const token = jwt.sign( 
+      {
+        username: username, 
+        email: email 
+      },
+        process.env.ACCESS_TOKEN_SECRET,
+      {
+        expiresIn: process.env.ACCESS_TOKEN_LIFE,
+      }
+		);
+    const refreshToken = jwt.sign( 
+      {
+        username:username
+      }, 
+      process.env.SECRET_TOKEN_REFRESH,
+      { expiresIn: process.env.ACCESS_TOKEN_LIFE }
+    );
+    let response = {
+      status: "Đã đăng nhập",
+      token: token,
+      refreshtoken:refreshToken
+    }
+		return response 
+	} catch (error) {
+		console.log(`Lỗi khi khởi tạo access token:  + ${error}`);
+		return null; 
+	}
+};
+
+// Verify Token
+export const verifyToken =  (req, res, next) => {
+  let token =
+    req.body.token || req.query.token || req.headers.token;
+    token = token.split(' ')[1];
+    if (!token) {
+      return res.status(403).send("A token is required for authentication");
+    }
+    try {
+      const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+      req.username = decoded;
+    } catch (err) {
+      return res.status(401).send("Invalid Token");
+    }
+    return next();
+}
+
+// Refresh Token
+export const refreshToken =  async (req, res, next) => {
+  const {refreshToken, username, email} = req.body
+  let user;
+  try {
+    user = await User.findOne({ username: username, refreshToken: refreshToken });
+  } catch (err) {
+    console.log(err);
+  }
+
+  if(refreshToken && user) {
+    const user = {
+        username: req.username,
+        email: req.email
+    }
+    const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.SECRET_TOKEN_REFRESH});
+    const response = {
+      "token": token,
+    }
+    res.status(200).json(response);
+  }
+  else {
+      res.status(404).send('Invalid request')
+  }
+}

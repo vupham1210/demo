@@ -10,6 +10,8 @@ import {
 } from "react-router-dom";
 
 import Register from './pages/Register';
+import Login from './pages/Login';
+import Account from './pages/Account';
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
       <div className="container">
         <Routes>
           <Route path="/dang-ky/" element={ <Register/> } />
+          <Route path="/dang-nhap/" element={ <Login/> } />
+          <Route path="/tai-khoan/" element={ <Account/> } />
         </Routes>
       </div>
     </Router>
