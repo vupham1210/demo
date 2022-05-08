@@ -1,4 +1,5 @@
 import { User } from '../model/User.js';
+import md5 from 'md5';
 
 export const getAllUsers = async (req, res, next) => {
   console.log('All User')
@@ -30,26 +31,49 @@ export const getById = async (req, res, next) => {
 };
 
 export const addUser = async (req, res, next) => {
-  const { username, password, email, phone, address, image } = req.body;
+  const { username, email, phone, password, role = 'subscriber'} = req.body;
+  let response = {
+    title: "Lỗi xảy ra",
+    message: "Tên đăng nhập hoặc địa chỉ Email đã có người đăng ký, vui lòng thử lại",
+    type: 'warning',
+    error: true,
+  };
+
   let user;
   try {
     user = new User({
-      username,
-      password,
-      email,
-      phone,
-      address,
-      image,
+      username:username,
+      password:md5(password),
+      email:email,
+      phone:phone,
+      role:role,
     });
-    await user.save();
+    const validateUser = await User.findOne({ username: username });
+    if(!validateUser){
+      await user.save(); 
+      response = {
+        title: "Thành công",
+        message: "Đã tạo thành công tài khoản",
+        type: 'success',
+        error: true,
+      }
+    } else {
+      response = {
+        title: "Lỗi xảy ra",
+        message: "Tài khoản này được tạo, xin vui lòng thử lại với tên tài khoản khác",
+        type: 'warning',
+        error: true,
+      }
+    }
+    
   } catch (err) {
     console.log(err);
   }
 
   if (!user) {
-    return res.status(500).json({ message: "Unable To Add" });
+    return res.status(500).json(response);
   }
-  return res.status(201).json({ user });
+  return res.status(201).json(response);
 };
 
 export const updateUser = async (req, res, next) => {
@@ -63,6 +87,7 @@ export const updateUser = async (req, res, next) => {
         email,
         phone,
         address,
+        role,
         image,
     });
     user = await user.save();

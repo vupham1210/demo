@@ -1,1 +1,12 @@
-http://localhost:5000/users
+GET http://localhost:5000/users
+
+###
+POST  http://localhost:5000/users/add
+Content-Type: application/json
+
+{
+    "username" : "hoanpro698",
+    "email": "hoanpro698@gmail.com",
+    "phone": "0903888781",
+    "password": "01272345hoan"
+}
