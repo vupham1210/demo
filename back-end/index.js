@@ -19,4 +19,4 @@ mongoose.connect(process.env.MONGODB_URL)
     app.listen(5000);
     console.log("Connected post 5000");
   })
-  .catch((err) => console.log(err));
+  .catch((err) => console.log(err)); 
