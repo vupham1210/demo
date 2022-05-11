@@ -1,7 +1,8 @@
-import React from 'react'
-import { Container, Row, Col, Button, Card, ListGroup } from 'react-bootstrap'
+import React, { useState, useEffect, useRef } from 'react'
+import { Container, Row, Col, Button, Card, ListGroup, Form } from 'react-bootstrap'
 import { House, Calendar2Plus, CalendarWeek, PencilSquare, ArrowReturnRight } from 'react-bootstrap-icons';
 import { Link } from 'react-router-dom';
+import UpdateAccountForm from '../components/UpdateAccountForm';
 
 const Account = () => {
   return (
@@ -42,9 +43,7 @@ const Account = () => {
           </ListGroup>
         </Col>
         <Col xs={12} md={8}>
-          <Card>
-            <Card.Header>Thông tin tài khoản</Card.Header>
-          </Card>
+            <UpdateAccountForm />
         </Col>
       </Row>
     </Container>

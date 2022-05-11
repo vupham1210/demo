@@ -8,4 +8,19 @@ form{
   .formHelp {
       border: 1px solid red;
   }
+  .previewAvatar{
+    position: relative;
+    overflow: hidden;
+    width: 200px;
+    height: 200px;
+    img{
+      position: absolute;
+      top: 0%;
+      left: 0%;
+      min-width: 100%;
+      height: auto;
+      min-height: 100%;
+      width: auto;
+    }
+  }
 }

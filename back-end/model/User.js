@@ -2,13 +2,7 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 const userSchema = new Schema({
-  firstname:{
-    type: String,
-  },
-  lastname:{
-    type: String,
-  },
-  username: {
+    username: {
       type: String,
       required: true,
       unique: true,
@@ -22,6 +16,21 @@ const userSchema = new Schema({
       required: true,
       unique: true,
     },
+    firstname:{
+      type: String,
+    },
+    lastname:{
+      type: String,
+    },
+    birth_day: {
+      type: Date,
+    },
+    personal_id:{
+      type: String,
+    },
+    avatar: {
+      type: String,
+    },
     phone: {
       type: Number,
     },
@@ -33,7 +42,7 @@ const userSchema = new Schema({
       default: false,
     },
     image: {
-      type: String,
+      type: [String],
     },
     refreshToken:{
       type: String,

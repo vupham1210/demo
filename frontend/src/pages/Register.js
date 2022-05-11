@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { Button, Form } from 'react-bootstrap';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { userData, userStatus, createUserAsync } from '../features/user/userSlice';
+import { userCreateStatus, createUserAsync } from '../features/user/createUser';
 
 import Swal from 'sweetalert2';
 
