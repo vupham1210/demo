@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { Navbar, Nav, Container, Button } from 'react-bootstrap'
 import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { getUserInforAsync, userInformation, removeUserInfor } from '../features/user/userSlice';
 import { isLoggedInUser, loggoutUser } from '../features/user/loginUser';
 
 const Header = () => {
   // Redux
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const userInformationSelect = useSelector(userInformation);
   const isLoggedInUserSelect = useSelector(isLoggedInUser);
   const localStorageToken = localStorage.getItem('token');
@@ -29,6 +30,7 @@ const Header = () => {
   const loggout = () => {
     dispatch(loggoutUser());
     dispatch(removeUserInfor());
+    return navigate("/dang-nhap/");
   }
 
   return (

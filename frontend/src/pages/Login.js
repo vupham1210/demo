@@ -1,44 +1,14 @@
 import React,  { useEffect , useState, useRef } from 'react'
 import { Form, Button } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { loginUserAsync } from '../features/user/loginUser';
-import Parser from 'html-react-parser';
+import { useNavigate  } from 'react-router-dom';
 
-import axios from 'axios';
-
-
-const ImageMap =  () => {
-  const [image, setImage] = useState();
-
-  useEffect(() => {
-    async function loadImage () {
-      await axios.get('http://localhost:3000/upload/images').then((res) =>{
-        setImage(res.data)
-      });
-    }
-    loadImage();
-  }, [])
-
-  if(image){
-    return(
-      <>
-      {
-        image.map((val) => {
-          return <img key={val._id} src={val.image} alt=""/>
-        })
-      }
-        
-      </>
-    )   
-    
-  } else {
-    return 'loading';
-  }
-
-}
 
 const Login = () => {
   
+  let navigate = useNavigate();
+
   const dispatch = useDispatch();
 
   const inputUserName = useRef(null);
@@ -71,9 +41,7 @@ const Login = () => {
       username: inputUserName.current.value,
       password: inputPassword.current.value,
     }
-
     setLoginForm(Form);
-    
   };
 
 
@@ -89,12 +57,12 @@ const Login = () => {
 
     if(isAllValidate){
       dispatch(loginUserAsync(loginForm));
+      return navigate('/tai-khoan/')
     }
   }, [loginForm])
 
   return (
     <>
-      <ImageMap />
       <h3>Đăng nhập tài khoản</h3>
       <Form>
         <Form.Group className="mb-3">

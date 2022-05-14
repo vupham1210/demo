@@ -31,12 +31,12 @@ export const uploadSingle = async (req, res, next) => {
     message: "Đã có lỗi xảy ra khi tải lên tệp",
     type: 'warning',
     error: true,
-    author: req.userId ? req.userId : 'không xác định',
+    author: req.userId.user_id ? req.userId.user_id : 'không xác định',
   }
 
-  const author = req.userId;
+  const author = req.userId ? req.userId.user_id : '';
 
-  if( !author){
+  if( author == '' ){
     res.status(203).json(response)
     return;
   }
