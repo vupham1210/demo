@@ -1,23 +1,20 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { AxiosInstance } from './Instance';
+
 import Swal from 'sweetalert2';
 
-const userUpdateAction = `${process.env.REACT_APP_SERVER_URL}users/update`;
+const userUpdateAction = `${process.env.REACT_APP_SERVER_URL}/users/update`;
+
+const initialState = {
+  status: 'idle',
+  data: '',
+}
 
 // Async Update user
 export const updateUserAsync = createAsyncThunk(
   'updateUser',
   async (formData) => {
-    var config = {
-      method: 'post',
-      url: userUpdateAction,
-      headers: { 
-        'token': `bear ${formData.token}`, 
-        'Content-Type': 'application/json'
-      },
-      data : JSON.stringify(formData)
-    };
-    const response = await axios(config).then((res) => {
+    const response = await AxiosInstance.post(userUpdateAction, formData).then((res) => {
       return res.data;
     }).catch(function (error) {
       console.log(error);
@@ -33,16 +30,11 @@ export const updateUserAsync = createAsyncThunk(
 );
 
 export const updateUserSlice = createSlice({
-  name: 'user',
+  name: 'updateUser',
   initialState,
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
-    updateUser: (state, action) => {
-      if(action.payload != undefined){
-        state.data = action.payload;
-      }
-    },
-    userLoggout: (state) => {
+    removeUserInfor: (state) => {
       state.data = '';
       sessionStorage.clear();
     }
@@ -60,6 +52,6 @@ export const updateUserSlice = createSlice({
   }
 });
 
-export const userUpdateStatus = (state) => state.user.status;
+export const userUpdateStatus = (state) => state.updateUser.status;
 
 export default updateUserSlice.reducer;

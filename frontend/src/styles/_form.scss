@@ -23,4 +23,18 @@ form{
       width: auto;
     }
   }
+  .inputThumbnail {
+      height: 280px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+  }
+  .inputGallery {
+      height: 132px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+  }
 }

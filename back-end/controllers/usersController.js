@@ -1,7 +1,6 @@
 import md5 from 'md5';
 import { User } from '../model/User.js';
-import { signAccessToken, signRefreshToken, verifyRefreshToken} from '../helper/jwt_services.js';
-import { client } from '../helper/connection_redis.js';
+import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../helper/jwt_services.js';
 
 export const getUserInfor = async (req, res, next) => {
   let user;
@@ -14,6 +13,8 @@ export const getUserInfor = async (req, res, next) => {
     return res.status(201).json('Lỗi đăng nhập');
   } else {
     const response = {
+      first_name:user.first_name,
+      last_name:user.last_name,
       address: user.address,
       avatar: user.avatar,
       birth_day: user.birth_day,
@@ -69,17 +70,11 @@ export const loginUser = async (req, res, next) => {
 
       const accesstoken = await signAccessToken(user.id);
       const refreshtoken = await signRefreshToken(user.id);
-
+      
       response = {
-        title: "Thành công",
-        message: "Đăng nhập thành công!",
-        type: 'success',
-        error: true,
-        user: {
-          token: accesstoken,
-          refreshToken: refreshtoken,
-          expiredAt: Date.now() + (60 * 10 * 1000),
-        },
+        token: accesstoken,
+        refreshToken: refreshtoken,
+        expiredAt: Date.now() + (60 * 10 * 1000),
       };
 
       return res.status(200).json(response);
@@ -138,20 +133,18 @@ export const addUser = async (req, res, next) => {
 };
 
 export const updateUser = async (req, res, next) => {
-  
   const { 
     first_name, 
     last_name, 
     birth_day,
     personal_id,
     address,
-    username,
     avatar,
   } = req.body;
   
   let user;
   try {
-   user = await User.findOneAndUpdate({username: username}, {
+   user = await User.findOneAndUpdate({_id: req.userId.user_id}, {
         first_name:first_name,
         last_name:last_name,
         birth_day:birth_day,
@@ -163,7 +156,7 @@ export const updateUser = async (req, res, next) => {
     console.log(err);
   }
   if (!user) {
-    return res.status(404).json({ message: "Unable To Update By this ID" });
+    return res.status(404).json('Không thể chỉnh sửa nội dung, lỗi đăng nhập');
   }
   return res.status(200).json({ user });
 };
@@ -189,10 +182,10 @@ export const getRefreshToken =  async (req, res, next) => {
     const { user_id } = await verifyRefreshToken(refreshtoken);
     if(user_id){
       const accessToken = await signAccessToken(user_id);
-      const refreshToken = await signRefreshToken(user_id);
+      const refreshNewtoken = await signRefreshToken(user_id);
       return res.status(200).json({ 
         token: accessToken,
-        refreshToken: refreshToken,
+        refreshToken: refreshNewtoken,
         expiredAt: Date.now() + (60 * 10 * 1000),
       });
     } else {

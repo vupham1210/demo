@@ -11,7 +11,8 @@ import {
 
 import Register from './pages/Register';
 import Login from './pages/Login';
-import Account from './pages/Account';
+import Account from './pages/dashboard/Account';
+import Dashboard from './pages/Dashboard';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/dang-ky/" element={ <Register/> } />
           <Route path="/dang-nhap/" element={ <Login/> } />
           <Route path="/tai-khoan/" element={ <Account/> } />
+          <Route path="/tai-khoan/:slug" element={ <Dashboard /> } />
         </Routes>
       </div>
     </Router>

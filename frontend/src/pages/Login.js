@@ -2,6 +2,40 @@ import React,  { useEffect , useState, useRef } from 'react'
 import { Form, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUserAsync } from '../features/user/loginUser';
+import Parser from 'html-react-parser';
+
+import axios from 'axios';
+
+
+const ImageMap =  () => {
+  const [image, setImage] = useState();
+
+  useEffect(() => {
+    async function loadImage () {
+      await axios.get('http://localhost:3000/upload/images').then((res) =>{
+        setImage(res.data)
+      });
+    }
+    loadImage();
+  }, [])
+
+  if(image){
+    return(
+      <>
+      {
+        image.map((val) => {
+          return <img key={val._id} src={val.image} alt=""/>
+        })
+      }
+        
+      </>
+    )   
+    
+  } else {
+    return 'loading';
+  }
+
+}
 
 const Login = () => {
   
@@ -42,6 +76,8 @@ const Login = () => {
     
   };
 
+
+
   useEffect(() =>{
     let isAllValidate = true;
     for (const iterator in loginForm) {
@@ -58,6 +94,7 @@ const Login = () => {
 
   return (
     <>
+      <ImageMap />
       <h3>Đăng nhập tài khoản</h3>
       <Form>
         <Form.Group className="mb-3">

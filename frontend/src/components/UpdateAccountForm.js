@@ -2,17 +2,20 @@ import React, { useEffect, useState, useRef } from 'react'
 import { Form, Card, Button, Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
 import { 
-  getUserInforAsync, 
-  userInformation 
-} from '../features/user/userSlice';
+  updateUserAsync, 
+  userUpdateStatus 
+} from '../features/user/updateUser';
 
 const UpdateAccountForm = () => {
   
   const dispatch = useDispatch();
 
-  const userDataSelect = useSelector(userInformation);
+  const updateStatus = useSelector(userUpdateStatus);
 
   const [avatar, setAvatar] = useState('');
+
+  const [userDataSelect, setUserDataSelect] = useState('');
+
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -104,16 +107,15 @@ const UpdateAccountForm = () => {
     setFormData(Form);
 
     let isAllValidate = true;
-    for (const iterator in formData) {
-      if (!formData.hasOwnProperty(iterator)) continue;
-      if(formData[iterator] == ''){
-        console.log(iterator);
-        isAllValidate = false
-      }
-    }
+    // for (const iterator in formData) {
+    //   if (!formData.hasOwnProperty(iterator)) continue;
+    //   if(formData[iterator] == '' && iterator != 'avatar'){
+    //     isAllValidate = false
+    //   }
+    // }
 
     if(isAllValidate){
-      dispatch(getUserInforAsync(formData));
+      dispatch(updateUserAsync(formData));
     }
 
   } 
@@ -130,6 +132,14 @@ const UpdateAccountForm = () => {
   }
   
   return (
+    <>
+    <form action="http://localhost:3000/upload" encType="multipart/form-data" method="post">
+      <div className="form-group">
+        <input type="file" className="form-control-file" name="uploaded_file"/>
+        <input type="text" className="form-control" placeholder="Number of speakers" name="nspeakers"/>
+        <input type="submit" value="Get me the stats!" className="btn btn-default"/>            
+      </div>
+    </form>
     <Form onSubmit={ (e) => {
       e.preventDefault(); 
       updateFormData()
@@ -143,7 +153,7 @@ const UpdateAccountForm = () => {
                 avatar ?  
                   <Col xs={12} className='mb-3'>
                     <div className='previewAvatar'>
-                      <img classname="w-100" src={avatar} alt="Ảnh đại diện"/>
+                      <img className="w-100" src={avatar} alt="Ảnh đại diện"/>
                     </div>
                   </Col>: ''
               }
@@ -208,7 +218,7 @@ const UpdateAccountForm = () => {
                   <Form.Group className="mb-3">
                     <Form.Label>Địa chỉ Email</Form.Label>
                     <Form.Control 
-                    defaultValue={userDataSelect ? userDataSelect.user_email : ''}
+                    defaultValue={userDataSelect ? userDataSelect.email : ''}
                     className={!isValidInputEmail && 'formHelp'} 
                     ref={inputEmail} 
                     type="email" 
@@ -247,6 +257,8 @@ const UpdateAccountForm = () => {
         </Card.Body>
       </Card>
     </Form>
+    </>
+    
   )
 }
 

@@ -14,7 +14,7 @@ export const verifyToken = async (req, res, next) => {
     } catch (err) {
       return res.status(401).send("Lỗi đăng nhập, Token không hợp lệ");
     }
-
+    console.log('user:', req.userId);
     return next();
 };
 
