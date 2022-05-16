@@ -9,13 +9,10 @@ import {
 const UpdateAccountForm = () => {
   
   const dispatch = useDispatch();
-
   const updateStatus = useSelector(userUpdateStatus);
-
   const [avatar, setAvatar] = useState('');
-
   const [userDataSelect, setUserDataSelect] = useState('');
-
+  
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -133,13 +130,6 @@ const UpdateAccountForm = () => {
   
   return (
     <>
-    <form action="http://localhost:3000/upload" encType="multipart/form-data" method="post">
-      <div className="form-group">
-        <input type="file" className="form-control-file" name="uploaded_file"/>
-        <input type="text" className="form-control" placeholder="Number of speakers" name="nspeakers"/>
-        <input type="submit" value="Get me the stats!" className="btn btn-default"/>            
-      </div>
-    </form>
     <Form onSubmit={ (e) => {
       e.preventDefault(); 
       updateFormData()

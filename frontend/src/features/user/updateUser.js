@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { AxiosInstance } from './Instance';
+import { AxiosInstance } from '../Instance';
 
 import Swal from 'sweetalert2';
 

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { AxiosInstance } from './Instance';
+import { AxiosInstance } from '../Instance';
 
 const getUserInforAction = `${process.env.REACT_APP_SERVER_URL}/users/`;
 

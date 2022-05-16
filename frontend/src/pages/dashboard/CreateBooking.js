@@ -1,13 +1,21 @@
-import React, { useRef, useState } from 'react'
-import { Button , Row, Col } from 'react-bootstrap';
+import React, { useEffect, useRef, useState } from 'react'
+import { Button , Row, Col, Card } from 'react-bootstrap';
 import { Editor} from '@tinymce/tinymce-react';
-import { Image, Plus } from 'react-bootstrap-icons';
-import { Calendar } from 'react-date-range';
-import { Loader, Uploader, Avatar, toaster, Message } from 'rsuite';
-import 'react-date-range/dist/styles.css'; // main style file
-import 'react-date-range/dist/theme/default.css'; // theme css file
+import { Image, Plus, ThreeDotsVertical } from 'react-bootstrap-icons';
+import { DateRangePicker, DatePicker, Toggle } from 'rsuite';
+import { Loader, Uploader, Avatar, toaster, Message, Form, Input, Schema  } from 'rsuite';
+import { useDispatch, useSelector } from 'react-redux';
+import { dataBookingForm, statusBookingForm, createBookingAsync, addFormData, addTimerData,removeTimerData, addQtyData, addStartTimeData, addEndTimeData, dataHourState } from '../../features/booking/BookingForm';
 
-import { Form } from 'rsuite';
+const {
+  allowedMaxDays,
+  allowedDays,
+  allowedRange,
+  beforeToday,
+  afterToday,
+  combine
+} = DateRangePicker;
+
 
 function previewFile(file, callback) {
   const reader = new FileReader();
@@ -33,7 +41,7 @@ const fileList = [
 ];
 
 const styles = {
-  width: '100%',
+  width: 300,
   height: 200
 };
 
@@ -42,126 +50,230 @@ const stylesDragger = {
   height: 120
 };
 
-const CreateBooking = () => {
 
-  const editorRef = useRef(null);
-  const log = () => {
-    if (editorRef.current) {
-        console.log(editorRef.current.getContent());
-    }
-  }
+const CreateBooking = () => {
+  const dispatch = useDispatch();
+  const FormData = useSelector(dataBookingForm);
+  const FormStatus = useSelector(statusBookingForm);
+
+  let hourState = useSelector(dataHourState);
+
   const [uploading, setUploading] = useState(false);
   const [fileInfo, setFileInfo] = useState(null);
-  const[gallery, setGallery] = useState([1,2,3]); 
+
+  const dateFns = new Date();
+
+  console.log(hourState);
+  const addHour = () => {
+    dispatch(addTimerData({
+      timeStart : '',
+      timeEnd: '',
+      qty: '',
+    }));
+  }
+
+  const removeHour = (index) => {
+    dispatch(removeTimerData(index))
+  }
+
+  const updateStartTime = (index, value) => {
+    dispatch(addStartTimeData({index: index, value: value}))
+  }
+
+  const updateEndTime = (index, value) => {
+    dispatch(addEndTimeData({index: index, value: value}))
+  }
+
+  const Textarea = React.forwardRef((props, ref) => <Input {...props} as="textarea" ref={ref} />);
+  
+  const AddTimer = () => {
+
+    const [datePicker, setDatePicker] = useState(true);
+
+    return hourState ? 
+        <Card className="bg-white mb-3">
+          <Card.Body>
+            <Form.Group>
+              <Row className='align-items-end'>
+                <Col xs={12}>
+                  <Form.Group className="mb-3">
+                    <Form.ControlLabel>Chọn nhiều </Form.ControlLabel>
+                    <Toggle onChange={() => { setDatePicker(!datePicker) }} size="sm"/>
+                  </Form.Group>
+                </Col>
+                <Col xs={12}>
+                  <Form.Group className="mb-3">
+                      <Form.ControlLabel>Chọn ngày: </Form.ControlLabel>
+                      {
+                        datePicker ? 
+                        <DatePicker name="starttimer[]" 
+                        format="dd/MM/yyyy" 
+                        className='w-100' 
+                        disabledDate={beforeToday()}
+                        /> 
+                        : 
+                        <DateRangePicker 
+                        name="starttimer[]" 
+                        format="dd/MM/yyyy" 
+                        className='w-100'
+                        disabledDate={beforeToday()}
+                        />
+
+                      }
+                  </Form.Group>
+                </Col>
+                {
+                  hourState.map((val, index) => {
+                    return(
+                      <Col xs={12} key={index}>
+                        <Row className="align-items-end bg-light m-0 mb-3 py-2 rounded">
+                          <Col className="col-auto">
+                            <Form.Group className="mb-4">
+                              <ThreeDotsVertical/>
+                            </Form.Group>
+                          </Col>
+                          <Col>
+                            <Form.Group className="mb-3">
+                              <Form.ControlLabel>Giờ bắt đầu: </Form.ControlLabel>
+                              <Input type="time"  onChange={(e) => { updateStartTime(index, e)}} name="starttimer[]"/>
+                            </Form.Group>
+                          </Col>
+                          <Col>
+                            <Form.Group className="mb-3">
+                              <Form.ControlLabel>Giờ kết thúc: </Form.ControlLabel>
+                                <Input 
+                                type="time"  
+                                onChange={(e) => { updateStartTime(index, e)}} 
+                                min="16:00" 
+                                max="22:00"
+                                name="endtimer[]"/>
+                            </Form.Group>
+                          </Col>
+                          <Col>
+                            <Form.Group className="mb-3">
+                              <Form.ControlLabel>Sô lượng: </Form.ControlLabel>
+                                <Input 
+                                type="number"  
+                                onChange={(e) => { addQtyData(index, e)}} 
+                                min="0" 
+                                max="99999"
+                                name="qty[]"/>
+                            </Form.Group>
+                          </Col>
+                          <Col className='col-auto'>
+                            <Form.Group className="mb-3">
+                              <Button type='button' className="border-none" onClick={() => { removeHour(index) }}>Xóa</Button>
+                            </Form.Group>
+                          </Col>
+                          </Row>
+                      </Col>
+                    );
+                  })
+                }
+              </Row>
+            </Form.Group>
+          </Card.Body>
+        </Card>
+    : ''
+  }
+
+  const model = Schema.Model({
+    title: Schema.Types.StringType().isRequired('This field is required.'),
+    email: Schema.Types.StringType().isEmail('Please enter a valid email address.')
+  });
 
   return (
-    <Form>
+    <Form fluid model={model}>
         <Row>
-          <Col xs={5}>
-           <Form.Group className='mb-3'>
-              <Form.ControlLabel>
-                Ảnh đại diện
-              </Form.ControlLabel>
-              <Uploader
-                fileListVisible={false}
-                listType="picture"
-                action="//jsonplaceholder.typicode.com/posts/"
-                onUpload={file => {
-                  setUploading(true);
-                  previewFile(file.blobFile, value => {
-                    setFileInfo(value);
-                  });
-                }}
-                onSuccess={(response, file) => {
-                  setUploading(false);
-                  toaster.push(<Message type="success">Uploaded successfully</Message>);
-                  console.log(response);
-                }}
-                onError={() => {
-                  setFileInfo(null);
-                  setUploading(false);
-                  toaster.push(<Message type="error">Upload failed</Message>);
-                }}
-              >
-                <div className='d-block' style={styles}>
-                  {uploading && <Loader backdrop center />}
-                  {fileInfo ? (
-                    <Image height={60} width={60} />
-                  ) : (
-                    <Image height={60} width={60} />
-                  )}
-                </div>
-              </Uploader>
-            </Form.Group>
+        <Col xs={12} md={8}>
+          <Card className="bg-light">
+            <Card.Body>
+                <Row>
+                  <Col xs={12}>
+                    <Form.Group className='mb-3'>
+                      <Form.ControlLabel>
+                        Tiêu đề
+                      </Form.ControlLabel>
+                      <Form.Control name="title" placeholder='Nhập tiêu đề'/>
+                    </Form.Group>
+                  </Col>
+                  <Col xs={12}>
+                  <Form.Group className='mb-3'>
+                      <Form.ControlLabel>
+                        Nội dung
+                      </Form.ControlLabel>
+                      <Form.Control rows={5} name="textarea" accepter={Textarea} />
+                    </Form.Group>
+                  </Col>
+                  <Col xs={12}>
+                    <AddTimer />
+                    <Button type='button' onClick={addHour}>Thêm giờ</Button>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
           </Col>
-          <Col xs={7}>
-           <Form.Group className='mb-3'>
-              <Form.ControlLabel>
-                Gallery
-              </Form.ControlLabel>
-              <div className='py-3'>
-              <Uploader
-                draggable
-                listType="picture-text"
-                defaultFileList={fileList}
-                action="//jsonplaceholder.typicode.com/posts/"
-              >
-                <div style={stylesDragger}>Nhấp hoặc kéo hình ảnh vào đây</div>
-              </Uploader>
-              </div>
-            </Form.Group>
-          </Col>
-          <Col xs={12}>
-            <Form.Group className='mb-3'>
-              <Form.ControlLabel>
-                Tiêu đề
-              </Form.ControlLabel>
-              <Form.Control placeholder='Nhập tiêu đề'/>
-            </Form.Group>
-          </Col>
-          <Col xs={12}>
-          <Form.Group className='mb-3'>
-              <Form.ControlLabel>
-                Nội dung
-              </Form.ControlLabel>
-              <Editor
-                apiKey='g5edrfn3vpjve2o25ec8l5r87960ol0al13hx5e4rnfaj0pu'
-                onInit={(evt, editor) => editorRef.current = editor}
-                initialValue="<p>This is the initial content of the editor.</p>"
-                init={{
-                height: 300,
-                menubar: false,
-                plugins: [
-                  'lists','link','charmap','preview','anchor','searchreplace','visualblocks','insertdatetime','table','help','wordcount'
-                ],
-                toolbar: 'undo redo | casechange blocks | bold italic backcolor | ' +
-                  'alignleft aligncenter alignright alignjustify | ' +
-                  'bullist numlist checklist outdent indent | removeformat'
-                }}
-            />
-            </Form.Group>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Group className='mb-3'>
-              <Form.ControlLabel>
-                Từ ngày
-              </Form.ControlLabel>
-              <Calendar
-                  date={new Date()}
-                  onChange={(e) => console.log(e.target.value)}
-                />
-            </Form.Group>
-          </Col>
-          <Col xs={12} md={6}>
-            <Form.Group className='mb-3'>
-              <Form.ControlLabel>
-                Đến ngày
-              </Form.ControlLabel>
-              <Form.Control placeholder='Nhập tiêu đề'/>
-            </Form.Group>
-          </Col>
-          <Col xs={12}>
-            <Button onClick={log}>Đăng thông tin</Button>
+          <Col xs={12} md={4}>
+              <Row>
+                <Col xs={12}>
+                  <Form.Group className='mb-3'>
+                      <Uploader
+                        className='mt-0'
+                        fileListVisible={false}
+                        listType="picture"
+                        action="//jsonplaceholder.typicode.com/posts/"
+                        onUpload={file => {
+                          setUploading(true);
+                          previewFile(file.blobFile, value => {
+                            setFileInfo(value);
+                          });
+                        }}
+                        onSuccess={(response, file) => {
+                          setUploading(false);
+                          toaster.push(<Message type="success">Uploaded successfully</Message>);
+                          console.log(response);
+                        }}
+                        onError={() => {
+                          setFileInfo(null);
+                          setUploading(false);
+                          toaster.push(<Message type="error">Upload failed</Message>);
+                        }}
+                      >
+                        <div className='d-block' style={styles}>
+                          <Form.ControlLabel>
+                            Ảnh đại diện
+                          </Form.ControlLabel>
+                          {uploading && <Loader backdrop center />}
+                          {fileInfo ? (
+                            <Image height={60} width={60} />
+                          ) : (
+                            <Image height={60} width={60} />
+                          )}
+                        </div>
+                      </Uploader>
+                    </Form.Group>
+                  </Col>
+                  <Col xs={12}>
+                  <Form.Group className='mb-3'>
+                      <Form.ControlLabel>
+                        Gallery
+                      </Form.ControlLabel>
+                      <div className='py-3'>
+                      <Uploader
+                        draggable
+                        listType="picture-text"
+                        defaultFileList={fileList}
+                        action="//jsonplaceholder.typicode.com/posts/"
+                      >
+                        <div style={stylesDragger}>Nhấp hoặc kéo hình ảnh vào đây</div>
+                      </Uploader>
+                      </div>
+                    </Form.Group>
+                  </Col>
+                  <Col xs={12}>
+                    <Button>Đăng thông tin</Button>
+                  </Col>
+              </Row>
           </Col>
         </Row>
     </Form>

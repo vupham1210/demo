@@ -12,10 +12,10 @@ const Dashboard = () => {
   return (
     <Container className="py-4">
       <Row>
-        <Col xs={12} md={3}>
+        <Col className='col-auto'>
             <DasboardNav />
         </Col>
-        <Col xs={12} md={9}>
+        <Col>
             <DasboardPanel page={slug} />
         </Col>
       </Row>

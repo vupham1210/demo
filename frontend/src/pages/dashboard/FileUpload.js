@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Loader, Uploader, Avatar, toaster, Message } from 'rsuite';
-import { refreshNewToken } from '../../features/user/Instance';
+import { refreshNewToken } from '../../features/Instance';
 
 const styles = {
   lineHeight: '200px'
