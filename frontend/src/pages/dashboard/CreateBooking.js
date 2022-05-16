@@ -3,9 +3,27 @@ import { Button , Row, Col, Card } from 'react-bootstrap';
 import { Editor} from '@tinymce/tinymce-react';
 import { Image, Plus, ThreeDotsVertical } from 'react-bootstrap-icons';
 import { DateRangePicker, DatePicker, Toggle } from 'rsuite';
-import { Loader, Uploader, Avatar, toaster, Message, Form, Input, Schema  } from 'rsuite';
+import { Loader, Uploader, Avatar, toaster, Message, Form, Input, Schema, Modal   } from 'rsuite';
 import { useDispatch, useSelector } from 'react-redux';
-import { dataBookingForm, statusBookingForm, createBookingAsync, addFormData, addTimerData,removeTimerData, addQtyData, addStartTimeData, addEndTimeData, dataHourState } from '../../features/booking/BookingForm';
+import { setThumbnail,
+         setGallery,
+         dataBookingForm,
+         statusBookingForm,
+         createBookingAsync,
+         addFormData,
+         addTimerData,
+         removeTimerData,
+         addQtyData,
+         addStartTimeData,
+         addEndTimeData,
+         setContent,
+         setTitle,
+         setDatePicker,
+         dataHourState 
+        } from '../../features/booking/BookingForm';
+import { imagesSelected } from '../../features/library/LibrarySlice';
+
+import Library from '../../components/Library';
 
 const {
   allowedMaxDays,
@@ -41,8 +59,11 @@ const fileList = [
 ];
 
 const styles = {
-  width: 300,
-  height: 200
+  width: '100%',
+  height: 200,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
 };
 
 const stylesDragger = {
@@ -50,25 +71,84 @@ const stylesDragger = {
   height: 120
 };
 
+const GalleryImages = (props) => {
+  return (
+    props.images ?
+      <Row>
+        {
+          props.images.map((val) => {
+            return(
+              <Col xs={3} key={val._id}>
+                <img className='galleryThumbnail' src={val.image} />
+              </Col>
+            )
+          })
+        }
+      </Row>
+    : ''
+  )
+  
+
+}
 
 const CreateBooking = () => {
-  const dispatch = useDispatch();
-  const FormData = useSelector(dataBookingForm);
-  const FormStatus = useSelector(statusBookingForm);
 
-  let hourState = useSelector(dataHourState);
+  const dispatch = useDispatch();
+  let formData = useSelector(dataBookingForm);
+  let ImagesData = useSelector(imagesSelected);
+
+  let hourState = formData.time;
 
   const [uploading, setUploading] = useState(false);
   const [fileInfo, setFileInfo] = useState(null);
+  
+  const [selectGallery, setSelectGallery] = useState(false);
 
-  const dateFns = new Date();
 
-  console.log(hourState);
+  const model = Schema.Model({
+    title: Schema.Types.StringType().isRequired('This field is required.'),
+    email: Schema.Types.StringType().isEmail('Please enter a valid email address.')
+  });
+
+  console.log(ImagesData);
+
+  // Modal 
+  const [open, setOpen] = useState(false);
+
+  const handleOpenSingle = () => {
+    setSelectGallery(false);  
+    setOpen(true);
+  };
+
+  const handleOpenMultipe = () => {
+    setSelectGallery(true);  
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  }
+
+  const handleImageSelect = () => {
+    if(!selectGallery){ 
+        dispatch(setThumbnail(...ImagesData));
+      } else {
+        dispatch(setGallery(ImagesData));
+    }
+    setOpen(false);
+  }
+
+  console.log(formData);
+
+  function handleChange(e) {
+    dispatch(setContent(e))
+  }
+
   const addHour = () => {
     dispatch(addTimerData({
-      timeStart : '',
-      timeEnd: '',
-      qty: '',
+      timeStart : '00:00',
+      timeEnd: '00:00',
+      qty: 0,
     }));
   }
 
@@ -84,107 +164,84 @@ const CreateBooking = () => {
     dispatch(addEndTimeData({index: index, value: value}))
   }
 
-  const Textarea = React.forwardRef((props, ref) => <Input {...props} as="textarea" ref={ref} />);
-  
+  const updateQtyTime = (index, value) => {
+    dispatch(addQtyData({index: index, value: value}))
+  }
+
   const AddTimer = () => {
-
-    const [datePicker, setDatePicker] = useState(true);
-
     return hourState ? 
-        <Card className="bg-white mb-3">
-          <Card.Body>
-            <Form.Group>
-              <Row className='align-items-end'>
-                <Col xs={12}>
-                  <Form.Group className="mb-3">
-                    <Form.ControlLabel>Chọn nhiều </Form.ControlLabel>
-                    <Toggle onChange={() => { setDatePicker(!datePicker) }} size="sm"/>
-                  </Form.Group>
-                </Col>
-                <Col xs={12}>
-                  <Form.Group className="mb-3">
-                      <Form.ControlLabel>Chọn ngày: </Form.ControlLabel>
-                      {
-                        datePicker ? 
-                        <DatePicker name="starttimer[]" 
-                        format="dd/MM/yyyy" 
-                        className='w-100' 
-                        disabledDate={beforeToday()}
-                        /> 
-                        : 
-                        <DateRangePicker 
-                        name="starttimer[]" 
-                        format="dd/MM/yyyy" 
-                        className='w-100'
-                        disabledDate={beforeToday()}
-                        />
+      hourState.map((val, index) => {
+        const preIndex = index - 1;
+        const MinStart = preIndex > 0 ? hourState[index].timeStart : '00:00';
+        const MinEnd = hourState[index].timeEnd ? hourState[index].timeEnd : '00:00';
 
-                      }
-                  </Form.Group>
-                </Col>
-                {
-                  hourState.map((val, index) => {
-                    return(
-                      <Col xs={12} key={index}>
-                        <Row className="align-items-end bg-light m-0 mb-3 py-2 rounded">
-                          <Col className="col-auto">
-                            <Form.Group className="mb-4">
-                              <ThreeDotsVertical/>
-                            </Form.Group>
-                          </Col>
-                          <Col>
-                            <Form.Group className="mb-3">
-                              <Form.ControlLabel>Giờ bắt đầu: </Form.ControlLabel>
-                              <Input type="time"  onChange={(e) => { updateStartTime(index, e)}} name="starttimer[]"/>
-                            </Form.Group>
-                          </Col>
-                          <Col>
-                            <Form.Group className="mb-3">
-                              <Form.ControlLabel>Giờ kết thúc: </Form.ControlLabel>
-                                <Input 
-                                type="time"  
-                                onChange={(e) => { updateStartTime(index, e)}} 
-                                min="16:00" 
-                                max="22:00"
-                                name="endtimer[]"/>
-                            </Form.Group>
-                          </Col>
-                          <Col>
-                            <Form.Group className="mb-3">
-                              <Form.ControlLabel>Sô lượng: </Form.ControlLabel>
-                                <Input 
-                                type="number"  
-                                onChange={(e) => { addQtyData(index, e)}} 
-                                min="0" 
-                                max="99999"
-                                name="qty[]"/>
-                            </Form.Group>
-                          </Col>
-                          <Col className='col-auto'>
-                            <Form.Group className="mb-3">
-                              <Button type='button' className="border-none" onClick={() => { removeHour(index) }}>Xóa</Button>
-                            </Form.Group>
-                          </Col>
-                          </Row>
-                      </Col>
-                    );
-                  })
-                }
+        var regExp = /(\d{1,2})\:(\d{1,2})\:(\d{1,2})/;
+
+        let DefaultStart = hourState[index].timeStart ? hourState[index].timeStart : MinStart; 
+        let DefaultEnd = hourState[index].timeEnd ? hourState[index].timeEnd : MinEnd;
+
+        if(parseInt(DefaultEnd.replace(regExp, "$1$2$3")) < parseInt(DefaultStart.replace(regExp, "$1$2$3"))){
+          DefaultEnd = DefaultStart;
+        } 
+
+        return(
+          <Col xs={12} key={index}>
+            <Row className="align-items-end bg-light m-0 mb-3 py-2 rounded">
+              <Col className="col-auto">
+                <Form.Group className="mb-4">
+                  <ThreeDotsVertical/>
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group className="mb-3">
+                  <Form.ControlLabel>Giờ bắt đầu: </Form.ControlLabel>
+                  <Input 
+                    defaultValue={DefaultStart} 
+                    type="time" 
+                    onChange={(e) => { updateStartTime(index, e)}} 
+                    name="starttimer[]"
+                    min={MinStart}
+                  />
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group className="mb-3">
+                  <Form.ControlLabel>Giờ kết thúc: </Form.ControlLabel>
+                  <Input 
+                    defaultValue={DefaultEnd}
+                    type="time"  
+                    onChange={(e) => { updateEndTime(index, e)}} 
+                    min={MinEnd} 
+                    name="endtimer[]"/>
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group className="mb-3">
+                  <Form.ControlLabel>Sô lượng: </Form.ControlLabel>
+                    <Input 
+                    defaultValue={hourState[index].qty ? hourState[index].qty : 0}
+                    type="number"
+                    onChange={(e) => { updateQtyTime(index, e)}} 
+                    min="0" 
+                    max="99999"
+                    name="qty[]"/>
+                </Form.Group>
+              </Col>
+              <Col className='col-auto'>
+                <Form.Group className="mb-3">
+                  <Button type='button' className="border-none" onClick={() => { removeHour(index) }}>Xóa</Button>
+                </Form.Group>
+              </Col>
               </Row>
-            </Form.Group>
-          </Card.Body>
-        </Card>
+          </Col>
+        );
+      })
     : ''
   }
 
-  const model = Schema.Model({
-    title: Schema.Types.StringType().isRequired('This field is required.'),
-    email: Schema.Types.StringType().isEmail('Please enter a valid email address.')
-  });
-
   return (
     <Form fluid model={model}>
-        <Row>
+      <Row>
         <Col xs={12} md={8}>
           <Card className="bg-light">
             <Card.Body>
@@ -194,7 +251,7 @@ const CreateBooking = () => {
                       <Form.ControlLabel>
                         Tiêu đề
                       </Form.ControlLabel>
-                      <Form.Control name="title" placeholder='Nhập tiêu đề'/>
+                      <Form.Control onChange={(e) => { dispatch(setTitle(e)); }} value={formData.title} name="title" placeholder='Nhập tiêu đề'/>
                     </Form.Group>
                   </Col>
                   <Col xs={12}>
@@ -202,12 +259,48 @@ const CreateBooking = () => {
                       <Form.ControlLabel>
                         Nội dung
                       </Form.ControlLabel>
-                      <Form.Control rows={5} name="textarea" accepter={Textarea} />
+                      <Input onChange={(e) => { dispatch(setContent(e)) }} defaultValue="" rows={5} name="textarea" as="textarea" />
                     </Form.Group>
                   </Col>
                   <Col xs={12}>
-                    <AddTimer />
-                    <Button type='button' onClick={addHour}>Thêm giờ</Button>
+                  <Form.Group className="mb-3">
+                      <Card className="bg-white mb-3">
+                          <Card.Body>
+                            <Form.Group>
+                              <Row className='align-items-end'>
+                                <Col xs={12}>
+                                  <Form.Group className="mb-3">
+                                    <Form.ControlLabel>Chọn khoảng thời gian </Form.ControlLabel>
+                                    <Toggle onChange={() => { dispatch(setDatePicker()) }} size="sm" name="dateRanger"/>
+                                  </Form.Group>
+                                </Col>
+                                <Col xs={12}>
+                                  <Form.Group className="mb-3">
+                                  <Form.ControlLabel>Chọn ngày: </Form.ControlLabel>
+                                    {
+                                      !formData.rangerDatePicker ? 
+                                      <DatePicker name="starttimer[]" 
+                                      format="dd/MM/yyyy" 
+                                      className='w-100' 
+                                      disabledDate={beforeToday()}
+                                      /> 
+                                      : 
+                                      <DateRangePicker 
+                                      name="starttimer[]" 
+                                      format="dd/MM/yyyy" 
+                                      className='w-100'
+                                      disabledDate={beforeToday()}
+                                      />
+                                    }
+                                  </Form.Group>
+                                </Col>
+                                <AddTimer />
+                              </Row>
+                          </Form.Group>
+                        </Card.Body>
+                      </Card> 
+                      <Button type='button' onClick={addHour}>Thêm giờ</Button>
+                    </Form.Group>
                   </Col>
                 </Row>
               </Card.Body>
@@ -216,41 +309,16 @@ const CreateBooking = () => {
           <Col xs={12} md={4}>
               <Row>
                 <Col xs={12}>
-                  <Form.Group className='mb-3'>
-                      <Uploader
-                        className='mt-0'
-                        fileListVisible={false}
-                        listType="picture"
-                        action="//jsonplaceholder.typicode.com/posts/"
-                        onUpload={file => {
-                          setUploading(true);
-                          previewFile(file.blobFile, value => {
-                            setFileInfo(value);
-                          });
-                        }}
-                        onSuccess={(response, file) => {
-                          setUploading(false);
-                          toaster.push(<Message type="success">Uploaded successfully</Message>);
-                          console.log(response);
-                        }}
-                        onError={() => {
-                          setFileInfo(null);
-                          setUploading(false);
-                          toaster.push(<Message type="error">Upload failed</Message>);
-                        }}
-                      >
-                        <div className='d-block' style={styles}>
-                          <Form.ControlLabel>
-                            Ảnh đại diện
-                          </Form.ControlLabel>
-                          {uploading && <Loader backdrop center />}
-                          {fileInfo ? (
-                            <Image height={60} width={60} />
-                          ) : (
-                            <Image height={60} width={60} />
-                          )}
-                        </div>
-                      </Uploader>
+                    <Form.Group className='mb-3' onClick={handleOpenSingle}>
+                      {
+                        formData.thumbnail.image ? 
+                        <img className="imageThumbnail" src={formData.thumbnail.image} />
+                        : <Image height={60} width={60} />
+                      }
+                      
+                      <Form.ControlLabel>
+                        Ảnh đại diện
+                      </Form.ControlLabel>
                     </Form.Group>
                   </Col>
                   <Col xs={12}>
@@ -259,15 +327,15 @@ const CreateBooking = () => {
                         Gallery
                       </Form.ControlLabel>
                       <div className='py-3'>
-                      <Uploader
-                        draggable
-                        listType="picture-text"
-                        defaultFileList={fileList}
-                        action="//jsonplaceholder.typicode.com/posts/"
-                      >
-                        <div style={stylesDragger}>Nhấp hoặc kéo hình ảnh vào đây</div>
-                      </Uploader>
+                        <div style={stylesDragger} onClick={handleOpenMultipe}>
+                          {
+                            formData.gallery ? 
+                            <GalleryImages images={formData.gallery} />
+                            : <p>Chọn để thêm gallery</p>
+                          }
+                        </div>
                       </div>
+                      
                     </Form.Group>
                   </Col>
                   <Col xs={12}>
@@ -276,6 +344,22 @@ const CreateBooking = () => {
               </Row>
           </Col>
         </Row>
+        <Modal size={'md'} open={open} onClose={handleClose}>
+          <Modal.Header>
+            <Modal.Title>Modal Title</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+             <Library multipe={selectGallery} /> 
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant='danger' onClick={handleClose} appearance="subtle">
+              Đóng
+            </Button>
+            <Button onClick={handleImageSelect} appearance="primary">
+              Chọn hình ảnh
+            </Button>
+          </Modal.Footer>
+        </Modal>
     </Form>
   )
 }

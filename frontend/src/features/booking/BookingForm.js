@@ -5,7 +5,6 @@ const userUpdateAction = `${process.env.REACT_APP_SERVER_URL}/users/update`;
 
 const initialState = {
   status: 'idle',
-  hourState:[],
   formData: {
     thumbnail: '',
     gallery: [],
@@ -17,12 +16,13 @@ const initialState = {
         fieldContent: '',
       }
     ],
+    rangerDatePicker: false,
     date: '',
     time: [ 
       {
-        timeStart : '',
-        timeEnd: '',
-        qty: '',
+        timeStart : '00:00',
+        timeEnd: '00:00',
+        qty: '0',
       }
     ]
   },
@@ -51,35 +51,51 @@ export const bookingSlice = createSlice({
   name: 'createbooking',
   initialState,
   reducers: {
+    setThumbnail: (state, action) => {
+      state.formData.thumbnail = action.payload;
+    },
+    setGallery: (state, action) => {
+      state.formData.gallery = action.payload;
+    },
     addFormData: (state, action) => {
       console.log(action.payload);
     },
     addTimerData: (state, action) => {
-      const PreviousState = state.hourState;
+      const PreviousState = state.formData.time;
       const payload = action.payload;
-      state.hourState = [...PreviousState, payload];
+      state.formData.time = [...PreviousState, payload];
     },
     removeTimerData: (state, action) => {
-      let PreviousState = state.hourState;
+      let PreviousState = state.formData.time;
       let indexed = action.payload;
       PreviousState.splice(indexed, 1)
-      state.hourState = PreviousState;
+      state.formData.time = PreviousState;
     }, 
     addStartTimeData:(state, action) => {
       const index = action.payload.index;
       const value = action.payload.value;
-      state.hourState[index].timeStart = value;
+      state.formData.time[index].timeStart = value;
     }, 
     addEndTimeData:(state, action) => {
       const index = action.payload.index;
       const value = action.payload.value;
-      state.hourState[index].timeEnd = value;
+      state.formData.time[index].timeEnd = value;
     },
     addQtyData:(state, action) => {
       const index = action.payload.index;
       const value = action.payload.value;
-      state.hourState[index].qty = value;
+      console.log(index, value);
+      state.formData.time[index].qty = value;
     },
+    setTitle:(state, action) => {
+      state.formData.title = action.payload;
+    },
+    setContent:(state, action) => {
+      state.formData.content = action.payload;
+    },
+    setDatePicker:(state, action ) => {
+      state.formData.rangerDatePicker = !state.formData.rangerDatePicker;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -92,7 +108,19 @@ export const bookingSlice = createSlice({
   }
 })
 
-export const { addFormData, addTimerData, removeTimerData, addStartTimeData, addEndTimeData, addQtyData } = bookingSlice.actions;
+export const { 
+              setThumbnail,
+              setGallery,
+              addFormData,
+              addTimerData,
+              removeTimerData,
+              addStartTimeData,
+              addEndTimeData,
+              addQtyData,
+              setContent,
+              setTitle,
+              setDatePicker
+               } = bookingSlice.actions;
 export const dataHourState = (state) => state.bookingForm.hourState;
 export const dataBookingForm = (state) => state.bookingForm.formData;
 export const statusBookingForm = (state) => state.bookingForm.status;

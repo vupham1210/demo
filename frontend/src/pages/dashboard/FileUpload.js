@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Loader, Uploader, Avatar, toaster, Message } from 'rsuite';
 import { refreshNewToken } from '../../features/Instance';
 
+
 const styles = {
   lineHeight: '200px'
 };
@@ -14,18 +15,18 @@ const FileUpload = () => {
   let refreshToken = localStorage.getItem('refreshToken');
   let expiredAt = localStorage.getItem('expiredAt');
 
-  async function ValidateToken () {
-      if( token != undefined){     
-        if(expiredAt < Date.now()){
-        const newToken = await refreshNewToken(refreshToken);
-        token = newToken.token;
-        refreshToken = newToken.token;
-      }
-    }
-    setTokenValidate(token);   
-  }
   const [loading, setLoading] = useState(false);
   const [tokenValidate, setTokenValidate] = useState(token);
+  async function ValidateToken () {
+    if( token != undefined){     
+      if(expiredAt < Date.now()){
+      const newToken = await refreshNewToken(refreshToken);
+      token = newToken.token;
+      refreshToken = newToken.token;
+    }
+  }
+  setTokenValidate(token);   
+  }
 
   return (
     <Uploader 

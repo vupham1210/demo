@@ -1,0 +1,30 @@
+.LibraryThumbnail{
+    height: 160px;
+    overflow: hidden;
+    display: block;
+    border: 2px solid whitesmoke;
+    border-radius: .25rem;
+    cursor: pointer;
+    transition: all .3s ease-in-out;
+    &.actived{
+        border-color: red;
+        transition: all .3s ease-in-out;
+    }
+    img {
+        min-width: 100%;
+        width: auto;
+        height: 100%;
+        max-width: unset;
+    }
+}
+.indexLibrary{
+    height: 300px;
+    overflow-y: scroll;
+    margin-bottom: 35px
+}
+.imageThumbnail{
+    width: 100%;
+}
+.galleryThumbnail{
+    width: 100%;
+}

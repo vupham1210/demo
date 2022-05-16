@@ -25,18 +25,18 @@ export const getFile = (req, res, next) => {
 }
 
 export const uploadSingle = async (req, res, next) => {
-  console.log(req.userId);
+
+  const author = req.userId ? req.userId : '';
+
   let response = {
     title: "Lỗi xảy ra",
     message: "Đã có lỗi xảy ra khi tải lên tệp",
     type: 'warning',
     error: true,
-    author: req.userId.user_id ? req.userId.user_id : 'không xác định',
+    author: author.user_id ? author.user_id : 'không xác định',
   }
 
-  const author = req.userId ? req.userId.user_id : '';
-
-  if( author == '' ){
+  if( author.user_id == '' ){
     res.status(203).json(response)
     return;
   }
@@ -46,7 +46,7 @@ export const uploadSingle = async (req, res, next) => {
   var finalImg = {
     contentType: file.mimetype,
     image: file.filename,
-    author: req.userId,
+    author: author.user_id,
     originalname: file.originalname,
     filesize: file.size
   };
@@ -54,7 +54,11 @@ export const uploadSingle = async (req, res, next) => {
   let Image;
     
   try {
-    const validateImage = await Images.findOne(finalImg);
+    const validateImage = await Images.findOne({
+      author: author.user_id,
+      originalname: file.originalname,
+      filesize: file.size
+    });
     if(!validateImage){
         Image = await new Images(finalImg);
         await Image.save();
@@ -89,70 +93,46 @@ export const uploadSingle = async (req, res, next) => {
   }
 }
 
-// Upload Multipe 
-export const uploadMultipe = async (req, res, next) => {
-
-  // let response = {
-  //   title: "Lỗi xảy ra",
-  //   message: "Đã có lỗi xảy ra khi tải lên tệp",
-  //   type: 'warning',
-  //   error: true,
-  // }
-
-  // const files = req.files;
-  // console.log(files)
-  
-  // for (const single_file of files) {
-  //   var finalImg = {
-  //     contentType: single_file.mimetype,
-  //     image: single_file.filename,
-  //     author: 1
-  //   };
-
-  //   let Image;
-    
-  //   try {
-  //     let validateImage = await Images.findOne(finalImg);
-  //     if(!validateImage){
-  //         Image = await new Images(finalImg);
-  //         await Image.save();
-  //     } else {
-  //       response = {
-  //         title: "Lỗi xảy ra",
-  //         message: "Tệp này đã tải lên trước đó",
-  //         type: 'warning',
-  //         error: true,
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-
-  // if(files){
-  //   response = {
-  //     title: "Thành công",
-  //     message: "Tải tệp lên thành công",
-  //     type: 'success',
-  //     error: true,
-  //   }
-  //   res.send(response)
-  // } else {
-  //   res.status(400).json(response)
-  // }
-  res.status(200).json(req.file)
-}
-
 export const library = async (req, res) => {
   const allImages = await Images.find();
+  let response = [];
   if(allImages){
     allImages.map((val, index) => {
-      const filePath = ServerURI + `/upload/images/${val.image}`;
-      allImages[index].image = filePath;
+      const FileName = val.image;
+      const filePath = ServerURI + `/upload/images/${FileName}`;
+      let  currentImage = {...val._doc, path:filePath };
+      response.push(currentImage)
     })
-    res.status(200).send(allImages)
+    res.status(200).send(response)
   } else {
     res.status(400).json({message: "Không có hình ảnh nào được hiển thị"})
   }
   
+}
+
+export const removeImage = async (req, res) => {
+  let response = {
+    title: "Lỗi xảy ra",
+    message: "Tệp này đã tải lên trước đó",
+    type: 'warning',
+    error: true,
+  }
+
+  let deleteImage;
+
+  try {
+    const deleteImage = await Images.findByIdAndDelete(req.file_id);
+    if(deleteImage){
+      response = {
+        title: "Thành công",
+        message: "Tải tệp lên thành công",
+        type: 'success',
+        error: true,
+      }
+      return res.status(200).json(response);
+    }
+  } catch (error) {
+    console.log(error)
+  }
+  return res.status(400).json(response);
 }

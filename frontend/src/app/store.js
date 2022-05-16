@@ -8,7 +8,7 @@ import refreshtokenReducer from '../features/user/refreshTokenSlice';
 import createUserReducer from '../features/user/createUser';
 import updateUserReducer from '../features/user/updateUser';
 import bookingFormReducer from '../features/booking/BookingForm';
-
+import libraryReducer from '../features/library/LibrarySlice';
 import mySaga from './sagas';
 
 // disalbe thunk and add redux-saga middleware
@@ -24,7 +24,9 @@ export default configureStore({
       updateUser: updateUserReducer,
       createUser: createUserReducer,
       // Booking 
-      bookingForm: bookingFormReducer
+      bookingForm: bookingFormReducer,
+      // Library 
+      library: libraryReducer
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(sagaMiddleware)
   }, 

@@ -1,9 +1,10 @@
 import jwt from 'jsonwebtoken';
-import { client } from '../helper/connection_redis.js'; 
+import { User } from '../model/User.js';
 
 export const verifyToken = async (req, res, next) => {
   let token = req.headers.token;
-  let decoded;
+  if(token){
+    let decoded;
     token = token.split(' ')[1];
     if (!token) {
       return res.status(403).send("A token is required for authentication");
@@ -11,11 +12,13 @@ export const verifyToken = async (req, res, next) => {
     try {
       decoded = await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
       req.userId = decoded;
+      return next();
     } catch (err) {
       return res.status(401).send("Lỗi đăng nhập, Token không hợp lệ");
     }
-    console.log('user:', req.userId);
-    return next();
+  } else {
+    return res.status(401).send("Lỗi đăng nhập, Token không hợp lệ");
+  }
 };
 
 export const signAccessToken = async (userId) => {
@@ -36,7 +39,7 @@ export const signRefreshToken = async (userId) => {
     refreshToken = await jwt.sign({user_id:userId}, process.env.REFRESH_TOKEN_SECRET,{
       expiresIn: process.env.REFRESH_TOKEN_LIFE,
     });
-    await client.set( userId.toString(), refreshToken, {'EX': 365 * 24 * 60 * 60});
+    await User.findByIdAndUpdate(userId, { refreshToken: refreshToken});
     return refreshToken;
   } catch (error) {
     console.log(`Lỗi khi khởi tạo refresh token:  + ${error}`);
@@ -46,6 +49,7 @@ export const signRefreshToken = async (userId) => {
 export const verifyRefreshToken = async (refreshToken) => {
   let userId;
   let AvaiableRefreshToken;
+  let user;
   try {
     userId = await jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, payload) => {
       if(!err){
@@ -53,10 +57,11 @@ export const verifyRefreshToken = async (refreshToken) => {
       } else {
         console.log('Lỗi xác minh refreshToken:::', err.message);
       }
-    })
-    AvaiableRefreshToken = await client.get(userId.user_id.toString(), (err, reply) => {
-      return reply;
-    })
+    });
+    user = await User.findOne({_id: userId.user_id});
+    if(user){
+      AvaiableRefreshToken = user.refreshToken;
+    }
   } catch (error) {
     console.log(error);
   }

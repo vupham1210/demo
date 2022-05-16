@@ -6,7 +6,8 @@ import {
   loginUser, 
   updateUser, 
   deleteUser, 
-  getRefreshToken } from "../controllers/usersController.js";
+  getRefreshToken 
+} from "../controllers/usersController.js";
   
 import { verifyToken } from '../helper/jwt_services.js';          
 

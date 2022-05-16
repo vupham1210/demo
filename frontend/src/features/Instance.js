@@ -13,9 +13,9 @@ export const refreshNewToken = async (refreshToken) => {
     })
   };
   const response = await axios(config).then((res) => { return res.data; });
-  localStorage.setItem('token', response.token);
-  localStorage.setItem('refreshToken', response.refreshToken);
-  localStorage.setItem('expiredAt', response.expiredAt);
+    localStorage.setItem('token', response.token);
+    localStorage.setItem('refreshToken', response.refreshToken);
+    localStorage.setItem('expiredAt', response.expiredAt);
   return response;
 }
 

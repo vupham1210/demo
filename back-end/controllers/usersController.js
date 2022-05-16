@@ -70,15 +70,18 @@ export const loginUser = async (req, res, next) => {
 
       const accesstoken = await signAccessToken(user.id);
       const refreshtoken = await signRefreshToken(user.id);
-      
-      response = {
-        token: accesstoken,
-        refreshToken: refreshtoken,
-        expiredAt: Date.now() + (60 * 10 * 1000),
-      };
+      const updateRefreshToken = await User.findByIdAndUpdate(user._id, {refreshToken: refreshtoken});
 
-      return res.status(200).json(response);
-
+      if(updateRefreshToken){
+        console.log('update', user);
+        response = {
+          token: accesstoken,
+          refreshToken: refreshtoken,
+          expiredAt: Date.now() + (60 * 10 * 1000),
+        };
+  
+        return res.status(200).json(response);
+      }
     }
 
   } catch (err) {
