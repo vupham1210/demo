@@ -5,7 +5,7 @@ import { verifyToken } from '../helper/jwt_services.js';
 
 const BookingRouter = Router();
 
-BookingRouter.get('/', getBooking);
+BookingRouter.get('/', verifyToken , getBooking);
 BookingRouter.post('/add', verifyToken, addBooking);
 BookingRouter.patch('/update' ,verifyToken, updateBooking);
 BookingRouter.delete('/delete' ,verifyToken, deleteBooking);

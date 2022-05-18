@@ -1,7 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AxiosInstance } from '../Instance';
 import Swal from "sweetalert2";
+
 const userUpdateAction = `${process.env.REACT_APP_SERVER_URL}/users/update`;
+const createBooking = `${process.env.REACT_APP_SERVER_URL}/booking/add/`;
 
 const initialState = {
   status: 'idle',
@@ -17,7 +19,8 @@ const initialState = {
       }
     ],
     rangerDatePicker: false,
-    date: '',
+    startDate: '',
+    endDate: '',
     time: [ 
       {
         timeStart : '00:00',
@@ -30,9 +33,9 @@ const initialState = {
 
 // create Booking Async
 export const createBookingAsync = createAsyncThunk(
-  'updateUser',
+  'createbooking',
   async (formData) => {
-    const response = await AxiosInstance.post(userUpdateAction, formData).then((res) => {
+    const response = await AxiosInstance.post(createBooking, formData).then((res) => {
       return res.data;
     }).catch(function (error) {
       console.log(error);
@@ -59,6 +62,11 @@ export const bookingSlice = createSlice({
     },
     addFormData: (state, action) => {
       console.log(action.payload);
+    },
+    addDateData: (state, action) => {
+      console.log(action.payload);
+      state.formData.startDate = action.payload.startDate;
+      state.formData.endDate = action.payload.endDate;
     },
     addTimerData: (state, action) => {
       const PreviousState = state.formData.time;
@@ -93,6 +101,9 @@ export const bookingSlice = createSlice({
     setContent:(state, action) => {
       state.formData.content = action.payload;
     },
+    setLocation:(state, action) => {
+      state.formData.location = action.payload;
+    },
     setDatePicker:(state, action ) => {
       state.formData.rangerDatePicker = !state.formData.rangerDatePicker;
     }
@@ -112,12 +123,14 @@ export const {
               setThumbnail,
               setGallery,
               addFormData,
+              addDateData,
               addTimerData,
               removeTimerData,
               addStartTimeData,
               addEndTimeData,
               addQtyData,
               setContent,
+              setLocation,
               setTitle,
               setDatePicker
                } = bookingSlice.actions;

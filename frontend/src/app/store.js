@@ -8,6 +8,7 @@ import refreshtokenReducer from '../features/user/refreshTokenSlice';
 import createUserReducer from '../features/user/createUser';
 import updateUserReducer from '../features/user/updateUser';
 import bookingFormReducer from '../features/booking/BookingForm';
+import mannagerBookingReducer from '../features/booking/ManagerBooking';
 import libraryReducer from '../features/library/LibrarySlice';
 import mySaga from './sagas';
 
@@ -25,6 +26,7 @@ export default configureStore({
       createUser: createUserReducer,
       // Booking 
       bookingForm: bookingFormReducer,
+      managerBooking: mannagerBookingReducer,
       // Library 
       library: libraryReducer
     },

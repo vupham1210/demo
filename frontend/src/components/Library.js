@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Button, Col, Row } from 'react-bootstrap';
 import { AxiosInstance } from '../features/Instance';
 import axios from 'axios';
+import { XLg } from 'react-bootstrap-icons';
 
 const UpLoadServerURI = process.env.REACT_APP_SERVER_URL + '/upload/';
 const DeleteUploadServerURI = process.env.REACT_APP_SERVER_URL + '/upload/delete';
@@ -18,24 +19,8 @@ const previewFile = (file, callback) => {
     reader.readAsDataURL(file);
 }
 
-const removeFileImage = async (File_id, File_path) => {
-    const data = { file_id: File_id, file_path: File_path};
-    try {
-     const remove = await AxiosInstance.post(DeleteUploadServerURI, data).then((res) =>
-        {
-         return res.data;
-        }
-     );
-
-     if(remove){
-            console.log(`đã xóa file ${File_id}`);
-        }
-    } catch (error) {
-        console.log(error);
-    }
-} 
-
 const IndexLibrary = (props) => {
+
      const dispatch = useDispatch();
      const ImageSected = useSelector(imagesSelected);
 
@@ -47,6 +32,25 @@ const IndexLibrary = (props) => {
         }
      }
 
+     const removeFileImage = async (File_id, File_path) => {
+        const data = { file_id: File_id, file_path: File_path};
+        try {
+        const remove = await AxiosInstance.post(DeleteUploadServerURI, data).then((res) =>
+          {
+            return res.data;
+          }
+        );
+    
+        if(remove){
+              dispatch(loadLibraryAsync());
+              console.log(`đã xóa file ${File_id}`);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    } 
+
+  
      return props ?
      <div class="indexLibrary">
         
@@ -56,8 +60,10 @@ const IndexLibrary = (props) => {
                 props.images.map((val) => {
 
                 return <Col md={3} xs={4} key={val._id}>
-                            <Button variant='danger' onClick={() => {removeFileImage( val._id , val.image )}}>Xóa</Button>
                             <div className={ImageSected.includes(val) ? 'LibraryThumbnail actived mb-3' : 'LibraryThumbnail mb-3'} onClick={() => {toggle(val)}}>
+                                <Button variant='danger' onClick={() => {removeFileImage( val._id , val.image )}}>
+                                  <XLg width={16} height={16}/>
+                                </Button>
                                 <img src={val.path} />
                             </div>
                         </Col>

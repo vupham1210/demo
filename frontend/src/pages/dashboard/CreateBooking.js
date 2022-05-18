@@ -1,16 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { Button , Row, Col, Card } from 'react-bootstrap';
-import { Editor} from '@tinymce/tinymce-react';
-import { Image, Plus, ThreeDotsVertical } from 'react-bootstrap-icons';
+import { Image } from 'react-bootstrap-icons';
 import { DateRangePicker, DatePicker, Toggle } from 'rsuite';
-import { Loader, Uploader, Avatar, toaster, Message, Form, Input, Schema, Modal   } from 'rsuite';
+import { toaster, Message, Form, Input, InputNumber, Schema, Modal  } from 'rsuite';
 import { useDispatch, useSelector } from 'react-redux';
 import { setThumbnail,
          setGallery,
          dataBookingForm,
-         statusBookingForm,
+         addDateData,
          createBookingAsync,
-         addFormData,
          addTimerData,
          removeTimerData,
          addQtyData,
@@ -19,19 +17,15 @@ import { setThumbnail,
          setContent,
          setTitle,
          setDatePicker,
-         dataHourState 
+         setLocation,
         } from '../../features/booking/BookingForm';
-import { imagesSelected } from '../../features/library/LibrarySlice';
 
+import { imagesSelected } from '../../features/library/LibrarySlice';
 import Library from '../../components/Library';
+import { XLg } from 'react-bootstrap-icons';
 
 const {
-  allowedMaxDays,
-  allowedDays,
-  allowedRange,
   beforeToday,
-  afterToday,
-  combine
 } = DateRangePicker;
 
 
@@ -43,29 +37,6 @@ function previewFile(file, callback) {
   reader.readAsDataURL(file);
 }
 
-const fileList = [
-  {
-    name: 'a.png',
-    fileKey: 1,
-    url:
-      'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png'
-  },
-  {
-    name: 'b.png',
-    fileKey: 2,
-    url:
-      'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png'
-  }
-];
-
-const styles = {
-  width: '100%',
-  height: 200,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-
 const stylesDragger = {
   width: '100%',
   height: 120
@@ -74,12 +45,12 @@ const stylesDragger = {
 const GalleryImages = (props) => {
   return (
     props.images ?
-      <Row>
+      <Row className='m-0'>
         {
           props.images.map((val) => {
             return(
-              <Col xs={3} key={val._id}>
-                <img className='galleryThumbnail' src={val.image} />
+              <Col xs={6} key={val._id}>
+                <img className='galleryThumbnail' src={val.path} />
               </Col>
             )
           })
@@ -87,9 +58,8 @@ const GalleryImages = (props) => {
       </Row>
     : ''
   )
-  
-
 }
+
 
 const CreateBooking = () => {
 
@@ -99,21 +69,26 @@ const CreateBooking = () => {
 
   let hourState = formData.time;
 
-  const [uploading, setUploading] = useState(false);
-  const [fileInfo, setFileInfo] = useState(null);
-  
   const [selectGallery, setSelectGallery] = useState(false);
 
 
   const model = Schema.Model({
-    title: Schema.Types.StringType().isRequired('This field is required.'),
-    email: Schema.Types.StringType().isEmail('Please enter a valid email address.')
-  });
+    title: Schema.Types.StringType().isRequired('Tiêu đề là bắt buộc.'),
+    content: Schema.Types.StringType().isRequired('Nội dung mô tả là bắt buộc.'),
+    location: Schema.Types.StringType().isRequired('Địa điểm là trường bắt buộc.'),
+    qty: Schema.Types.StringType().addRule((value, data) => {
+      if(value < 1){
+        return false;
+      }
+      return true;
+    })
+});
 
   console.log(ImagesData);
 
   // Modal 
   const [open, setOpen] = useState(false);
+  const formRef = useRef();
 
   const handleOpenSingle = () => {
     setSelectGallery(false);  
@@ -138,12 +113,21 @@ const CreateBooking = () => {
     setOpen(false);
   }
 
-  console.log(formData);
-
-  function handleChange(e) {
-    dispatch(setContent(e))
+  const addDate = (data, multipe) => {
+    if(!multipe){
+      dispatch(addDateData({
+        startDate : data,
+        endDate: data,
+      }));
+      console.log(new Date(data))
+    } else {
+      dispatch(addDateData({
+        startDate : data[0],
+        endDate: data[1],
+      }));
+    }
   }
-
+  console.log(formData);
   const addHour = () => {
     dispatch(addTimerData({
       timeStart : '00:00',
@@ -187,11 +171,6 @@ const CreateBooking = () => {
         return(
           <Col xs={12} key={index}>
             <Row className="align-items-end bg-light m-0 mb-3 py-2 rounded">
-              <Col className="col-auto">
-                <Form.Group className="mb-4">
-                  <ThreeDotsVertical/>
-                </Form.Group>
-              </Col>
               <Col>
                 <Form.Group className="mb-3">
                   <Form.ControlLabel>Giờ bắt đầu: </Form.ControlLabel>
@@ -218,31 +197,66 @@ const CreateBooking = () => {
               <Col>
                 <Form.Group className="mb-3">
                   <Form.ControlLabel>Sô lượng: </Form.ControlLabel>
-                    <Input 
+                    <InputNumber 
                     defaultValue={hourState[index].qty ? hourState[index].qty : 0}
-                    type="number"
                     onChange={(e) => { updateQtyTime(index, e)}} 
                     min="0" 
                     max="99999"
+                    className='w-100'
                     name="qty[]"/>
                 </Form.Group>
               </Col>
               <Col className='col-auto'>
                 <Form.Group className="mb-3">
-                  <Button type='button' className="border-none" onClick={() => { removeHour(index) }}>Xóa</Button>
+                  <Button variant='danger' size='sm' type='button' className="border-none" onClick={() => { removeHour(index) }}>
+                      <XLg width={16} height={16}/>
+                  </Button>
                 </Form.Group>
               </Col>
-              </Row>
+            </Row>
           </Col>
         );
       })
     : ''
   }
 
+  const SubmitForm = (e) => {
+    
+    const form = {
+      title: formData.title,
+      content: formData.content,
+      description: '',
+      thumbnail: formData.thumbnail ? formData.thumbnail._id : '',
+      gallery: formData.gallery ? formData.gallery : [],
+      postIn: new Date(),
+      status: 'pending',
+      // Booking Post
+      time: formData.time ? formData.time : [],
+      location: '',
+      startDate: '',
+      startEnd: new Date(),
+    }
+
+    if (!formRef.current.check()) {
+      toaster.push(<Message type="error">Một hoặc nhiều trường bị thiếu thông tin</Message>);
+      return;
+    }
+
+    toaster.push(<Message type="success">Đang gửi dữ liệu</Message>);
+
+    dispatch(createBookingAsync(form));
+    
+  }
+
   return (
-    <Form fluid model={model}>
-      <Row>
-        <Col xs={12} md={8}>
+    <Form 
+    as='form' 
+    fluid 
+    model={model} 
+    ref={formRef}
+    onSubmit={(e) => { SubmitForm(e) }}>
+      <Row> 
+        <Col xs={12} sm={12} md={8}>
           <Card className="bg-light">
             <Card.Body>
                 <Row>
@@ -259,7 +273,7 @@ const CreateBooking = () => {
                       <Form.ControlLabel>
                         Nội dung
                       </Form.ControlLabel>
-                      <Input onChange={(e) => { dispatch(setContent(e)) }} defaultValue="" rows={5} name="textarea" as="textarea" />
+                      <Input onChange={(e) => { dispatch(setContent(e)) }} defaultValue="" rows={5} name="content" as="textarea" />
                     </Form.Group>
                   </Col>
                   <Col xs={12}>
@@ -269,29 +283,46 @@ const CreateBooking = () => {
                             <Form.Group>
                               <Row className='align-items-end'>
                                 <Col xs={12}>
-                                  <Form.Group className="mb-3">
-                                    <Form.ControlLabel>Chọn khoảng thời gian </Form.ControlLabel>
-                                    <Toggle onChange={() => { dispatch(setDatePicker()) }} size="sm" name="dateRanger"/>
+                                  <Form.Group className='mb-3'>
+                                    <Form.ControlLabel>
+                                      Địa điểm
+                                    </Form.ControlLabel>
+                                    <Form.Control onChange={(e) => { dispatch(setLocation(e)); }} value={formData.location} name="location" placeholder='Nhập địa điểm'/>
                                   </Form.Group>
                                 </Col>
                                 <Col xs={12}>
                                   <Form.Group className="mb-3">
-                                  <Form.ControlLabel>Chọn ngày: </Form.ControlLabel>
-                                    {
-                                      !formData.rangerDatePicker ? 
-                                      <DatePicker name="starttimer[]" 
-                                      format="dd/MM/yyyy" 
-                                      className='w-100' 
-                                      disabledDate={beforeToday()}
-                                      /> 
-                                      : 
-                                      <DateRangePicker 
-                                      name="starttimer[]" 
-                                      format="dd/MM/yyyy" 
-                                      className='w-100'
-                                      disabledDate={beforeToday()}
-                                      />
-                                    }
+                                    <Row>
+                                      <Col className='col-auto'>
+                                        <Form.Group className="mb-3">
+                                          <Form.ControlLabel>Chọn khoảng thời gian </Form.ControlLabel>
+                                          <Toggle onChange={() => { dispatch(setDatePicker()) }} size="sm" name="dateRanger"/>
+                                        </Form.Group>
+                                      </Col>
+                                      <Col>
+                                        <Form.ControlLabel>Chọn ngày: </Form.ControlLabel>
+                                        {
+                                          !formData.rangerDatePicker ? 
+                                          <DatePicker
+                                            format="dd/MM/yyyy" 
+                                            className='w-100' 
+                                            disabledDate={beforeToday()}
+                                            errorMessage={'Ngày nhập vào không chính xác'}
+                                            onChange={(e) => { addDate(e, false) }}
+                                            defaultValue={ formData.startDate ? formData.startDate : new Date()}
+                                          /> 
+                                          : 
+                                          <DateRangePicker 
+                                            format="dd/MM/yyyy" 
+                                            className='w-100'
+                                            disabledDate={beforeToday()}
+                                            errorMessage={'Ngày nhập vào không chính xác'}
+                                            onChange={(e) => { addDate(e, true) }}
+                                            defaultValue={ formData.startDate ? [formData.startDate, formData.endDate] : [new Date(), new Date()]}
+                                          />
+                                        }
+                                      </Col>
+                                    </Row>
                                   </Form.Group>
                                 </Col>
                                 <AddTimer />
@@ -306,30 +337,36 @@ const CreateBooking = () => {
               </Card.Body>
             </Card>
           </Col>
-          <Col xs={12} md={4}>
+          <Col xs={12} sm={12} md={4}>
               <Row>
                 <Col xs={12}>
                     <Form.Group className='mb-3' onClick={handleOpenSingle}>
-                      {
-                        formData.thumbnail.image ? 
-                        <img className="imageThumbnail" src={formData.thumbnail.image} />
-                        : <Image height={60} width={60} />
-                      }
-                      
-                      <Form.ControlLabel>
-                        Ảnh đại diện
-                      </Form.ControlLabel>
+                      <div className='uploadThumbnail'>
+                        {
+                          formData.thumbnail.path ? 
+                          <div className='uploadThumbnailImage'>
+                            <img className="imageThumbnail" src={formData.thumbnail.path} />
+                          </div>
+                          : 
+                          <div>
+                            <Image height={60} width={60} />
+                            <Form.ControlLabel>
+                              Ảnh đại diện
+                            </Form.ControlLabel>
+                          </div>
+                        }
+                        </div>
                     </Form.Group>
                   </Col>
                   <Col xs={12}>
-                  <Form.Group className='mb-3'>
+                  <Form.Group className='mb-3' onClick={handleOpenMultipe}>
                       <Form.ControlLabel>
                         Gallery
                       </Form.ControlLabel>
                       <div className='py-3'>
-                        <div style={stylesDragger} onClick={handleOpenMultipe}>
+                        <div style={stylesDragger} className='uploadGallery py-3'>
                           {
-                            formData.gallery ? 
+                            formData.gallery.length > 0 ? 
                             <GalleryImages images={formData.gallery} />
                             : <p>Chọn để thêm gallery</p>
                           }
@@ -339,7 +376,7 @@ const CreateBooking = () => {
                     </Form.Group>
                   </Col>
                   <Col xs={12}>
-                    <Button>Đăng thông tin</Button>
+                    <Button type='submit'>Đăng thông tin</Button>
                   </Col>
               </Row>
           </Col>
@@ -352,7 +389,7 @@ const CreateBooking = () => {
              <Library multipe={selectGallery} /> 
           </Modal.Body>
           <Modal.Footer>
-            <Button variant='danger' onClick={handleClose} appearance="subtle">
+            <Button variant='danger' className='me-2' onClick={handleClose} appearance="subtle">
               Đóng
             </Button>
             <Button onClick={handleImageSelect} appearance="primary">

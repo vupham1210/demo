@@ -2,6 +2,9 @@ import { Images } from '../model/Images.js';
 import { __dirname } from "../path.js";
 import dotenv from 'dotenv';
 
+import fs from 'fs';
+import { promisify } from 'util';
+
 dotenv.config();
 
 const ServerURI = process.env.SERVER_URI;
@@ -107,21 +110,23 @@ export const library = async (req, res) => {
   } else {
     res.status(400).json({message: "Không có hình ảnh nào được hiển thị"})
   }
-  
 }
 
 export const removeImage = async (req, res) => {
   let response = {
     title: "Lỗi xảy ra",
-    message: "Tệp này đã tải lên trước đó",
+    message: `Tệp này đã tải lên trước đó ${req.body.file_id}`,
     type: 'warning',
     error: true,
   }
 
+  const unLinkAsync = promisify(fs.unlink);
   let deleteImage;
 
   try {
-    const deleteImage = await Images.findByIdAndDelete(req.file_id);
+    const deleteImage = await Images.findByIdAndDelete(req.body.file_id);
+    // const deletePath =  await unlinkAsync(req.body.file_path);
+
     if(deleteImage){
       response = {
         title: "Thành công",
@@ -129,10 +134,11 @@ export const removeImage = async (req, res) => {
         type: 'success',
         error: true,
       }
-      return res.status(200).json(response);
+      return res.status(200).json({message: 'Complete'});
     }
   } catch (error) {
     console.log(error)
   }
+
   return res.status(400).json(response);
 }

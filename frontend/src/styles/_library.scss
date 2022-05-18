@@ -6,6 +6,7 @@
     border-radius: .25rem;
     cursor: pointer;
     transition: all .3s ease-in-out;
+    position: relative;
     &.actived{
         border-color: red;
         transition: all .3s ease-in-out;
@@ -16,6 +17,17 @@
         height: 100%;
         max-width: unset;
     }
+    button{
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        opacity: .8;
+        transition: all .3s ease-in-out;
+        transform: scale(.6);
+        &:hover{
+            opacity: 1;
+        }
+    }
 }
 .indexLibrary{
     height: 300px;
@@ -24,7 +36,50 @@
 }
 .imageThumbnail{
     width: 100%;
+    border: 2px solid whitesmoke;
+    border-radius: .25rem;
 }
 .galleryThumbnail{
     width: 100%;
+    border: 2px solid whitesmoke;
+    border-radius: .25rem;
+    height: 100%
+    ;
+}
+.uploadGallery {
+    display: block;
+    background: #fff;
+    background: var(--rs-uploader-dnd-bg);
+    border: 1px dashed #e5e5ea;
+    border: 1px dashed var(--rs-uploader-dnd-border);
+    border-radius: .25rem;
+    p{
+        display: flex;
+        height: 100%;
+        align-items: center;
+        text-align: center;
+        width: 100%;
+        justify-content: center;
+    }
+}
+.uploadThumbnail { 
+    background: #fff;
+    background: var(--rs-uploader-dnd-bg);
+    border: 1px dashed #e5e5ea;
+    border: 1px dashed var(--rs-uploader-dnd-border);
+    border-radius: .25rem;
+    text-align: center;
+    display: flex;
+    height: 210px;
+    align-items: center;
+    justify-content: center;
+    .uploadThumbnailImage{
+        height: 160px;
+        max-width: 100%;
+        display: block;
+        overflow: hidden;
+        img{
+            height: 100%;
+        }
+    }
 }

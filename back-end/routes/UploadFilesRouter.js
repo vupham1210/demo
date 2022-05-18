@@ -15,6 +15,6 @@ UploadRouter.get('/images/:name', getFile);
 
 UploadRouter.get("/images/", library);
 
-UploadRouter.get("/delete/", verifyToken , removeImage);
+UploadRouter.post("/delete/", verifyToken , removeImage);
 
 export default UploadRouter;

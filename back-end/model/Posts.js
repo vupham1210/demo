@@ -16,11 +16,11 @@ const ServicesSchema = new Schema({
     required: false
   },
   thumbnail: {
-    type: String,
+    type: Object,
     required: false
   },
   gallery: {
-    type: [string],
+    type: Array,
     required: false
   },
   postIn: {
@@ -28,8 +28,10 @@ const ServicesSchema = new Schema({
     required: true,
   },
   status: {
-    type: string,
+    type: String,
     required: true,
+    enum: ['publish', 'pending', 'draft', 'private'], 
+    default: 'pending'
   },
   // Booking Post
   location:{
@@ -38,11 +40,15 @@ const ServicesSchema = new Schema({
   },
   startDate: {
     type: Date,
-    required: true,
+    required: false,
   },
   startEnd: {
     type: Date,
-    required: true,
+    required: false,
+  },
+  time:{
+    type: Array,
+    required: false,
   },
   author: {
     type: String,
