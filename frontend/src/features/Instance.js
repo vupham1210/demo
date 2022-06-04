@@ -28,6 +28,7 @@ export const AxiosInstance = axios.create({
 })
 
 AxiosInstance.interceptors.request.use( async (config) => {
+  
   let token = localStorage.getItem('token');
   let refreshToken = localStorage.getItem('refreshToken');
   let expiredAt = localStorage.getItem('expiredAt');

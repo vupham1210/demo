@@ -6,7 +6,7 @@ const getBooking = `${process.env.REACT_APP_SERVER_URL}/booking/`;
 
 const initialState = {
   status: 'idle',
-  data: '',
+  data: [],
 }
 
 // create Booking Async
@@ -34,12 +34,15 @@ export const managerBookingSlice = createSlice({
       })
       .addCase(loadBookingAsync.fulfilled, (state, action) => {
         state.status = 'idle';
+        if(action.payload){
+          state.data = action.payload;
+        }
       })
   }
 })
 
-export const dataHourState = (state) => state.bookingForm.hourState;
-export const dataBookingServices = (state) => state.bookingForm.data;
-export const statusBookingServices = (state) => state.bookingForm.status;
+export const dataHourState = (state) => state.managerBooking.hourState;
+export const dataBookingServices = (state) => state.managerBooking.data;
+export const statusBookingServices = (state) => state.managerBooking.status;
 
 export default managerBookingSlice.reducer;

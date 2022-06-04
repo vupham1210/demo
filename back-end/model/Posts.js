@@ -3,6 +3,11 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const ServicesSchema = new Schema({
+  slug: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   title: {
     type: String,
     required: true
@@ -13,6 +18,10 @@ const ServicesSchema = new Schema({
   },
   description: {
     type: String,
+    required: false
+  },
+  custom_field: {
+    type: Array,
     required: false
   },
   thumbnail: {

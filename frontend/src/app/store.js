@@ -9,7 +9,10 @@ import createUserReducer from '../features/user/createUser';
 import updateUserReducer from '../features/user/updateUser';
 import bookingFormReducer from '../features/booking/BookingForm';
 import mannagerBookingReducer from '../features/booking/ManagerBooking';
+import managerSingleBookingReducer from '../features/booking/ManagerSingleBooking';
+
 import libraryReducer from '../features/library/LibrarySlice';
+
 import mySaga from './sagas';
 
 // disalbe thunk and add redux-saga middleware
@@ -27,6 +30,7 @@ export default configureStore({
       // Booking 
       bookingForm: bookingFormReducer,
       managerBooking: mannagerBookingReducer,
+      managerSingleBooking: managerSingleBookingReducer,
       // Library 
       library: libraryReducer
     },

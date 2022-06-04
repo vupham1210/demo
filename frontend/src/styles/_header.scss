@@ -1,0 +1,43 @@
+.mainHeader{
+    box-shadow: 0px 0px 10px -3px #cde1ff;
+    .brand{
+        width: 180px;
+    }
+
+    a.nav-link {
+        color: #333333 !important;
+        font-size: 16px !important;
+    }
+    button.createBooking {
+        background: #2ecc71;
+        color: white !important;
+    }
+    .greeting {
+        padding: 20px;
+        position: relative;
+        cursor: pointer;
+        &:hover{
+            .greetingMenu {
+                pointer-events: all;
+                opacity: 1;
+                transform: translateY(0px);
+                transition: all .3s ease-in-out;
+            }
+        }
+        .greetingMenu {
+            background: white;
+            position: absolute;
+            top: 50px;
+            box-shadow: 0px 0px 5px -3px;
+            width: 280px;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            right: 0;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(10px);
+            transition: all .3s ease-in-out;
+        }
+    }
+}

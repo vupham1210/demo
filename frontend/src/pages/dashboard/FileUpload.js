@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
+import { Card } from 'react-bootstrap';
 import { Loader, Uploader, Avatar, toaster, Message } from 'rsuite';
+import Library from '../../components/Library';
 import { refreshNewToken } from '../../features/Instance';
 
 
@@ -29,37 +31,14 @@ const FileUpload = () => {
   }
 
   return (
-    <Uploader 
-    accept="image/*" 
-    action={UpLoadServerURI} 
-    multiple={true} 
-    name="uploaded_file"
-    draggable
-    headers= {{
-      token: `bear ${tokenValidate}` 
-    }}
-
-    shouldQueueUpdate={fileList => {
-      setLoading(true);
-      ValidateToken();
-    }}
-
-    shouldUpload={file => {
-      return new Promise(resolve => {
-        setTimeout(() => {
-          alert('File check passed, run upload');
-          resolve(true);
-          setLoading(false);
-        }, 2000);
-      });
-    }}
-
-    onSuccess = { response => {
-      console.log(response);
-    }}
-    >
-      <div style={styles}>Nhấn vào hoặc kéo thả hình ảnh vào đây</div>
-    </Uploader>
+    <Card className="bg-whitesmoke">
+      <Card.Header>
+        <h5>Quản lý thư viện</h5>
+      </Card.Header>
+      <Card.Body>
+        <Library multipe={false} />
+      </Card.Body>
+    </Card>
   )
 }
 

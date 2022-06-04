@@ -9,6 +9,10 @@ import {
   Link
 } from "react-router-dom";
 
+import SingleBooking from './pages/BookingServices/SingleBooking';
+import ArchiveBooking from './pages/BookingServices/ArchiveBooking';
+
+import Home from './pages/Home';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import Account from './pages/dashboard/Account';
@@ -22,10 +26,14 @@ function App() {
       </div>
       <div className="container">
         <Routes>
+        <Route path="/" element={ <Home/> } />
           <Route path="/dang-ky/" element={ <Register/> } />
           <Route path="/dang-nhap/" element={ <Login/> } />
           <Route path="/tai-khoan/" element={ <Account/> } />
           <Route path="/tai-khoan/:slug" element={ <Dashboard /> } />
+          
+          <Route path="/booking/" element={ <ArchiveBooking /> } />
+          <Route path="/booking/:slug" element={ <SingleBooking /> } />
         </Routes>
       </div>
     </Router>

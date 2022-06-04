@@ -21,13 +21,7 @@ const initialState = {
     rangerDatePicker: false,
     startDate: '',
     endDate: '',
-    time: [ 
-      {
-        timeStart : '00:00',
-        timeEnd: '00:00',
-        qty: '0',
-      }
-    ]
+    time: []
   },
 }
 
@@ -68,45 +62,80 @@ export const bookingSlice = createSlice({
       state.formData.startDate = action.payload.startDate;
       state.formData.endDate = action.payload.endDate;
     },
+
     addTimerData: (state, action) => {
       const PreviousState = state.formData.time;
       const payload = action.payload;
       state.formData.time = [...PreviousState, payload];
     },
+
+    updateTimerData: (state, action) => {
+      let PreviousState = state.formData.time;
+      const payload = action.payload.value;
+      const indexed = action.payload.index;
+      PreviousState[indexed] = payload;
+      state.formData.time = PreviousState;
+    },
+
     removeTimerData: (state, action) => {
       let PreviousState = state.formData.time;
       let indexed = action.payload;
-      PreviousState.splice(indexed, 1)
+      indexed.map((val) => {
+        PreviousState.splice(val, 1)
+      })
       state.formData.time = PreviousState;
-    }, 
-    addStartTimeData:(state, action) => {
+     }, 
+     
+    addTimeData:(state, action) => {
       const index = action.payload.index;
       const value = action.payload.value;
       state.formData.time[index].timeStart = value;
     }, 
-    addEndTimeData:(state, action) => {
-      const index = action.payload.index;
-      const value = action.payload.value;
-      state.formData.time[index].timeEnd = value;
+    // addEndTimeData:(state, action) => {
+    //   const index = action.payload.index;
+    //   const value = action.payload.value;
+    //   state.formData.time[index].timeEnd = value;
+    // },
+    // addQtyData:(state, action) => {
+    //   const index = action.payload.index;
+    //   const value = action.payload.value;
+    //   console.log(index, value);
+    //   state.formData.time[index].qty = value;
+    // },
+    // setTitle:(state, action) => {
+    //   state.formData.title = action.payload;
+    // },
+    // setContent:(state, action) => {
+    //   state.formData.content = action.payload;
+    // },
+    // setLocation:(state, action) => {
+    //   state.formData.location = action.payload;
+    // },
+    // setDatePicker:(state, action ) => {
+    //   state.formData.rangerDatePicker = !state.formData.rangerDatePicker;
+    // },
+    // removeField: (state, action) => {
+    //   let PreviousState = state.formData.field;
+    //   let indexed = action.payload;
+    //   PreviousState.splice(indexed, 1)
+    //   state.formData.field = PreviousState;
+    // },
+    addField: (state, action) => {
+      const PreviousState = state.formData.field;
+      const payload = action.payload;
+      state.formData.field = [...PreviousState, payload];
     },
-    addQtyData:(state, action) => {
-      const index = action.payload.index;
-      const value = action.payload.value;
-      console.log(index, value);
-      state.formData.time[index].qty = value;
-    },
-    setTitle:(state, action) => {
-      state.formData.title = action.payload;
-    },
-    setContent:(state, action) => {
-      state.formData.content = action.payload;
-    },
-    setLocation:(state, action) => {
-      state.formData.location = action.payload;
-    },
-    setDatePicker:(state, action ) => {
-      state.formData.rangerDatePicker = !state.formData.rangerDatePicker;
-    }
+    // addFieldTitleData: (state, action) => {
+    //   const index = action.payload.index;
+    //   const value = action.payload.value;
+    //   state.formData.field[index].fieldName = value;
+    // },
+    // addFieldContentData: (state, action) => {
+    //   const index = action.payload.index;
+    //   const value = action.payload.value;
+    //   state.formData.field[index].fieldContent = value;
+    // }
+    
   },
   extraReducers: (builder) => {
     builder
@@ -126,13 +155,18 @@ export const {
               addDateData,
               addTimerData,
               removeTimerData,
-              addStartTimeData,
+              addTimeData,
+              updateTimerData,
               addEndTimeData,
               addQtyData,
               setContent,
               setLocation,
               setTitle,
-              setDatePicker
+              setDatePicker,
+              addField,
+              removeField,
+              addFieldTitleData,
+              addFieldContentData
                } = bookingSlice.actions;
 export const dataHourState = (state) => state.bookingForm.hourState;
 export const dataBookingForm = (state) => state.bookingForm.formData;
