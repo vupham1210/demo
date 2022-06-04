@@ -91,50 +91,50 @@ export const bookingSlice = createSlice({
       const value = action.payload.value;
       state.formData.time[index].timeStart = value;
     }, 
-    // addEndTimeData:(state, action) => {
-    //   const index = action.payload.index;
-    //   const value = action.payload.value;
-    //   state.formData.time[index].timeEnd = value;
-    // },
-    // addQtyData:(state, action) => {
-    //   const index = action.payload.index;
-    //   const value = action.payload.value;
-    //   console.log(index, value);
-    //   state.formData.time[index].qty = value;
-    // },
-    // setTitle:(state, action) => {
-    //   state.formData.title = action.payload;
-    // },
-    // setContent:(state, action) => {
-    //   state.formData.content = action.payload;
-    // },
-    // setLocation:(state, action) => {
-    //   state.formData.location = action.payload;
-    // },
-    // setDatePicker:(state, action ) => {
-    //   state.formData.rangerDatePicker = !state.formData.rangerDatePicker;
-    // },
-    // removeField: (state, action) => {
-    //   let PreviousState = state.formData.field;
-    //   let indexed = action.payload;
-    //   PreviousState.splice(indexed, 1)
-    //   state.formData.field = PreviousState;
-    // },
+    addEndTimeData:(state, action) => {
+      const index = action.payload.index;
+      const value = action.payload.value;
+      state.formData.time[index].timeEnd = value;
+    },
+    addQtyData:(state, action) => {
+      const index = action.payload.index;
+      const value = action.payload.value;
+      console.log(index, value);
+      state.formData.time[index].qty = value;
+    },
+    setTitle:(state, action) => {
+      state.formData.title = action.payload;
+    },
+    setContent:(state, action) => {
+      state.formData.content = action.payload;
+    },
+    setLocation:(state, action) => {
+      state.formData.location = action.payload;
+    },
+    setDatePicker:(state, action ) => {
+      state.formData.rangerDatePicker = !state.formData.rangerDatePicker;
+    },
+    removeField: (state, action) => {
+      let PreviousState = state.formData.field;
+      let indexed = action.payload;
+      PreviousState.splice(indexed, 1)
+      state.formData.field = PreviousState;
+    },
     addField: (state, action) => {
       const PreviousState = state.formData.field;
       const payload = action.payload;
       state.formData.field = [...PreviousState, payload];
     },
-    // addFieldTitleData: (state, action) => {
-    //   const index = action.payload.index;
-    //   const value = action.payload.value;
-    //   state.formData.field[index].fieldName = value;
-    // },
-    // addFieldContentData: (state, action) => {
-    //   const index = action.payload.index;
-    //   const value = action.payload.value;
-    //   state.formData.field[index].fieldContent = value;
-    // }
+    addFieldTitleData: (state, action) => {
+      const index = action.payload.index;
+      const value = action.payload.value;
+      state.formData.field[index].fieldName = value;
+    },
+    addFieldContentData: (state, action) => {
+      const index = action.payload.index;
+      const value = action.payload.value;
+      state.formData.field[index].fieldContent = value;
+    }
     
   },
   extraReducers: (builder) => {

@@ -118,8 +118,6 @@ const AddTimer = () => {
     }
   }
 
-  console.log(checkedHour);
-
   const addHour = () => {
     dispatch(addTimerData(hourStateMent));
     handleCloseHour();
@@ -209,7 +207,7 @@ const AddTimer = () => {
                   </Form.ControlLabel>
                   <Input 
                   onChange={(e) => { setHourStateMent({...hourStateMent, title: e}) }} 
-                  value={hourStateMent.title} 
+                  defaultValue={hourStateMent.title} 
                   name="title" 
                   placeholder='Nhập tiêu đề'/>
                 </Form.Group>
