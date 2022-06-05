@@ -1,9 +1,177 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300;8..144,400;8..144,500;8..144,600;8..144,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400;1,700&display=swap');
 
 @import 'form';
 @import 'library';
 @import 'header';
 
-body{
-    font-family: 'Roboto Flex', sans-serif;
+body #root{
+    font-family: 'Montserrat', sans-serif;
 }
+
+#main-buttons {
+    background-image: url(https://minimalthemedemo.simplybook.it/v2/themes/minimal/img/main-image.jpg);
+    position: relative;
+    left: 0;
+    width: 100%;
+    background-size: cover;
+    background-position: 50%;
+    min-height: 680px;
+    text-align: center;
+    background-repeat: no-repeat;
+    display: flex;
+    .column {
+        max-width: 1200px;
+        width: 100%;
+        margin: auto;
+    }
+    .wrapper {
+        display: flex;
+        height: 560px;
+        width: 100%;
+        align-items: center;
+        .inner {
+            width: 100%;
+            margin: auto;
+            vertical-align: middle;
+            .company-name {
+                font-size: 60px;
+                text-shadow: 0 2px 8px #00000026;
+                line-height: 1.3;
+                font-weight: 900;
+                word-wrap: break-word;
+                display: flex;
+                align-self: flex-start;
+                justify-content: center;
+                color: #e49092;
+            }
+            .bar {
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                align-self: flex-end;
+                margin: 50px 0 0;
+                padding: 0;
+                .btn {
+                    width: auto;
+                    margin: 10px 8px;
+                    border-radius: 50px;
+                    font-size: 20px;
+                    background: linear-gradient(to right, #f5a778, #e6938f, #e28c96);
+                    color: #ffffff;
+                    display: inline-block;
+                    text-align: center;
+                    position: relative;
+                    padding: 20px 70px;
+                    box-shadow: 0 5px 10px #0000001a;
+                    font-weight: 600;
+                    &:hover {
+                        opacity: .8;
+                        text-decoration: none;
+                    }
+                }
+            }
+        }
+    }
+}
+
+//Card User
+
+.tab {
+    border-radius: 20px!important;
+    box-shadow: 0 5px 10px #0000001a !important;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin-bottom: 0;
+    .excerpt-info {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        .preloader {
+            width: 100%;
+            padding-bottom: 56.25%;
+            padding-top: 30px;
+            height: 0;
+            min-height: 100px;   
+            position: relative;
+            background: none;
+            flex-shrink: 0;
+            border-radius: 20px 20px 0 0;
+            overflow: hidden;
+            .img {
+                display: flex;
+                img {
+                    width: 100%;
+                    position: absolute;
+                    height: auto;
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%,-50%);
+                }
+            }
+        }
+    }
+    .tab-pd {
+        position: relative;
+        display: flex;
+        padding: 35px 20px;
+        height: 100%;
+        flex-wrap: nowrap;
+        flex-direction: column;
+        .content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            margin-bottom: 15px;
+            .cap.short {
+                height: auto;
+                font-weight: 500;
+                text-align: center;
+                font-size: 20px;
+                margin-bottom: 5px;
+                word-break: break-word;
+                overflow: visible;
+            }
+            .bar {
+                text-align: left;
+                margin-bottom: 15px;
+                min-height: 56px;
+                .address a {
+                    color: #e49092;
+                }
+            }
+        }
+        .btn-bar{
+            display: flex;
+            align-items: stretch;
+            justify-content: space-between;
+            width: 100%;
+            position: relative;
+            .select{
+                background: linear-gradient(to right, #f5a778, #e6938f, #e28c96);
+                color: #ffffff;
+                border-radius: 50px;
+                padding: 0;
+                font-size: 16px;
+                width: 100%;
+                a {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 100%;
+                    height: 100%;
+                    padding: 12px 16px;
+                    box-sizing: border-box;
+                    color: white;
+                    text-decoration: none !important;
+                }
+                &:hover{
+                    box-shadow: 0 0 10px 0 #e6938fb3;
+                    opacity: .8;
+                }
+            }
+        }
+    }
+}
+
+//End Card User

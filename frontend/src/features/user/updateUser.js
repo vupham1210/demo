@@ -7,6 +7,7 @@ const userUpdateAction = `${process.env.REACT_APP_SERVER_URL}/users/update`;
 
 const initialState = {
   status: 'idle',
+  avatar: '',
   data: '',
 }
 
@@ -34,6 +35,9 @@ export const updateUserSlice = createSlice({
   initialState,
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
+    setAvatarUser: (state, action) => {
+      state.avatar = action.payload;
+    },
     removeUserInfor: (state) => {
       state.data = '';
       sessionStorage.clear();
@@ -52,6 +56,9 @@ export const updateUserSlice = createSlice({
   }
 });
 
-export const userUpdateStatus = (state) => state.updateUser.status;
+export const { setAvatarUser } = updateUserSlice.actions;
 
+export const userUpdateStatus = (state) => state.updateUser.status;
+export const userAvatar = (state) => state.updateUser.avatar;
+export const userData = (state) => state.updateUser.data;
 export default updateUserSlice.reducer;

@@ -1,28 +1,40 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Form, Card, Button, Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
+import { format } from 'date-fns'
+import { Image } from 'react-bootstrap-icons';
+import { Modal } from 'rsuite';
 import { 
   updateUserAsync, 
-  userUpdateStatus 
+  userUpdateStatus,
+  setAvatarUser, 
+  userAvatar 
 } from '../features/user/updateUser';
+import { userInformation,getUserInforAsync } from '../features/user/userSlice';
+import { imagesSelected } from '../features/library/LibrarySlice';
+import Library from './Library';
 
 const UpdateAccountForm = () => {
   
   const dispatch = useDispatch();
   const updateStatus = useSelector(userUpdateStatus);
-  const [avatar, setAvatar] = useState('');
-  const [userDataSelect, setUserDataSelect] = useState('');
+  const avatarRedux = useSelector(userAvatar);
+  const User = useSelector(userInformation);
   
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
     birth_day: '',
     personal_id: '',
+    email: '',
     address: '',
     avatar: '',
   });
 
-  const inputfile = useRef(null);
+  useEffect(()=>{
+    dispatch(getUserInforAsync());
+  },[dispatch])
+  
   const inputFirstName = useRef(null);
   const inputLastName = useRef(null);
   const inputPersonalID = useRef(null);
@@ -95,14 +107,15 @@ const UpdateAccountForm = () => {
       last_name: inputLastName.current.value,
       birth_day: inputBirthDay.current.value,
       personal_id: inputPersonalID.current.value,
-      address: inputAddress.current.value,
-      avatar: inputfile.current.value,
-      username: userDataSelect.user_name ? userDataSelect.user_name : '',
-      token: userDataSelect.token ? userDataSelect.token : ''
+      address: inputAddress.current.value, 
+      email: inputEmail.current.value,
+      avatar: avatarRedux ? avatarRedux._id : '',
+      username: User.user_name ? User.user_name : '',
+      token: User.token ? User.token : ''
     }
 
     setFormData(Form);
-
+    
     let isAllValidate = true;
     // for (const iterator in formData) {
     //   if (!formData.hasOwnProperty(iterator)) continue;
@@ -117,17 +130,25 @@ const UpdateAccountForm = () => {
 
   } 
   
-  const fileCallback = () => {
-   
-    let ImageAvatar = inputfile.current.files[0];
-    let reader = new FileReader();
-    let url = reader.readAsDataURL(ImageAvatar);
-
-    reader.onloadend = () => {
-      setAvatar(reader.result);
-    }
+  // Modal 
+  let ImagesData = useSelector(imagesSelected);
+  const [selectGallery, setSelectGallery] = useState(false);
+  const [open, setOpen] = useState(false);
+  console.log(User.avatar);
+  const handleOpenSingle = () => {
+    setSelectGallery(false);  
+    setOpen(true);
+    
+  };
+  const handleClose = () => {
+    setOpen(false);
   }
-  
+
+  const handleImageSelect = () => {
+    dispatch(setAvatarUser(...ImagesData));
+    setOpen(false);
+  }
+
   return (
     <>
     <Form onSubmit={ (e) => {
@@ -139,18 +160,23 @@ const UpdateAccountForm = () => {
       <Card className="mb-3">
         <Card.Body>
           <Row>
-              {
-                avatar ?  
-                  <Col xs={12} className='mb-3'>
-                    <div className='previewAvatar'>
-                      <img className="w-100" src={avatar} alt="Ảnh đại diện"/>
-                    </div>
-                  </Col>: ''
-              }
-              
-              <Col xs={4}>
-                <Form.Label>Ảnh đại diện</Form.Label>
-                <Form.Control ref={inputfile} onChange={fileCallback} type="file" accept="image/*"/>
+              <Col xs={12}>
+                    <Form.Group className='mb-3'>
+                      <div className='uploadThumbnail'>
+                        <div onClick={() => { handleOpenSingle() }}>
+                          {avatarRedux ? 
+                          <img width={200} height={200} src={avatarRedux.path}/>
+                          : 
+                          <div>
+                          <Image height={60} width={60} />
+                            <Form.Label>
+                              Ảnh đại diện
+                            </Form.Label>
+                          </div>
+                          } 
+                          </div>
+                        </div>
+                    </Form.Group>
               </Col>
           </Row>
         </Card.Body>
@@ -163,7 +189,7 @@ const UpdateAccountForm = () => {
                   <Form.Group className="mb-3">
                     <Form.Label>Họ</Form.Label>
                     <Form.Control 
-                    defaultValue={userDataSelect ? userDataSelect.first_name : ''}
+                    defaultValue={User ? User.firstname : ''}
                     className={!isValidInputFirstName && 'formHelp'} 
                     ref={inputFirstName} 
                     placeholder='Nhập họ của bạn'/>
@@ -174,10 +200,10 @@ const UpdateAccountForm = () => {
                   <Form.Group className="mb-3">
                     <Form.Label>Tên</Form.Label>
                     <Form.Control 
-                    defaultValue={userDataSelect ? userDataSelect.last_name : ''}
+                    defaultValue={User ? User.lastname : ''}
                     className={!isValidInputLastName && 'formHelp'} 
                     ref={inputLastName} 
-                    placeholder='Nhập tên của vạn'/>
+                    placeholder='Nhập tên của bạn'/>
                     {!isValidInputLastName && <span className="inlineHelp"> Thông tin này không được để trống! </span>}
                   </Form.Group>
               </Col>
@@ -185,7 +211,7 @@ const UpdateAccountForm = () => {
                   <Form.Group className="mb-3">
                     <Form.Label>Số CMND</Form.Label>
                     <Form.Control 
-                    defaultValue={userDataSelect ? userDataSelect.personal_id : ''}
+                    defaultValue={User ? User.personal_id : ''}
                     className={!isValidInputPersonalID && 'formHelp'} 
                     ref={inputPersonalID} 
                     placeholder='Nhập chứng minh nhân dân'/>
@@ -196,7 +222,7 @@ const UpdateAccountForm = () => {
                   <Form.Group className="mb-3">
                     <Form.Label>Ngày sinh</Form.Label>
                     <Form.Control 
-                    defaultValue={userDataSelect ? userDataSelect.birth_day : ''}
+                    defaultValue={User ? format(new Date(User.birth_day), 'yyyy-MM-dd') : ''}
                     className={!isValidInputBirthDay && 'formHelp'} 
                     ref={inputBirthDay} 
                     type="date" 
@@ -208,7 +234,7 @@ const UpdateAccountForm = () => {
                   <Form.Group className="mb-3">
                     <Form.Label>Địa chỉ Email</Form.Label>
                     <Form.Control 
-                    defaultValue={userDataSelect ? userDataSelect.email : ''}
+                    defaultValue={User ? User.email : ''}
                     className={!isValidInputEmail && 'formHelp'} 
                     ref={inputEmail} 
                     type="email" 
@@ -220,7 +246,7 @@ const UpdateAccountForm = () => {
                   <Form.Group className="mb-3">
                     <Form.Label>Số điện thoại</Form.Label>
                     <Form.Control 
-                    defaultValue={userDataSelect ? userDataSelect.phone : ''}
+                    defaultValue={User ? User.phone : ''}
                     className={!isValidInputPhone && 'formHelp'} 
                     ref={inputPhone} 
                     placeholder='Nhập số điện thoại'/>
@@ -231,7 +257,7 @@ const UpdateAccountForm = () => {
                   <Form.Group className="mb-3">
                     <Form.Label>Địa chỉ chi tiết</Form.Label>
                     <Form.Control 
-                    defaultValue={userDataSelect ? userDataSelect.address : ''}
+                    defaultValue={User ? User.address : ''}
                     className={!isValidInputAddress && 'formHelp'} 
                     ref={inputAddress} 
                     placeholder='Nhập địa chỉ của bạn'/>
@@ -247,6 +273,22 @@ const UpdateAccountForm = () => {
         </Card.Body>
       </Card>
     </Form>
+    <Modal size={'md'} open={open} onClose={handleClose}>
+        <Modal.Header>
+          <Modal.Title>Modal Title</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Library multipe={selectGallery} /> 
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant='danger' className='me-2' onClick={handleClose} appearance="subtle">
+            Đóng
+          </Button>
+          <Button onClick={handleImageSelect} appearance="primary">
+            Chọn hình ảnh
+          </Button>
+        </Modal.Footer>
+    </Modal>
     </>
     
   )

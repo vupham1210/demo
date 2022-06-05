@@ -1,6 +1,11 @@
 import md5 from 'md5';
 import { User } from '../model/User.js';
+import { Images } from '../model/Images.js';
+import dotenv from 'dotenv';
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../helper/jwt_services.js';
+dotenv.config();
+
+const ServerURI = process.env.SERVER_URI;
 
 export const getUserInfor = async (req, res, next) => {
   let user;
@@ -12,11 +17,13 @@ export const getUserInfor = async (req, res, next) => {
   if(!user){
     return res.status(201).json('Lỗi đăng nhập');
   } else {
+    let avatarTable = await Images.findOne({_id: user.avatar });
+    let filePath = await ServerURI + `/upload/images/${avatarTable.image}`;
     const response = {
-      first_name:user.first_name,
-      last_name:user.last_name,
+      firstname:user.firstname,
+      lastname:user.lastname,
       address: user.address,
-      avatar: user.avatar,
+      avatar: filePath,
       birth_day: user.birth_day,
       email: user.email,
       personal_id: user.personal_id,
@@ -30,10 +37,9 @@ export const getUserInfor = async (req, res, next) => {
 };
 
 export const getAllUsers = async (req, res, next) => {
-  console.log('All User')
   let users;
    try {
-     users = await User.find();
+     users = await User.find({ role: req.role = 'vendor'}).skip((req.page - 1) * req.perpage).limit(req.perpage);
    } catch (err) {
      console.log(err);
    }
@@ -143,15 +149,16 @@ export const updateUser = async (req, res, next) => {
     personal_id,
     address,
     avatar,
+    email,
   } = req.body;
-  
   let user;
   try {
    user = await User.findOneAndUpdate({_id: req.userId.user_id}, {
-        first_name:first_name,
-        last_name:last_name,
+        firstname:first_name,
+        lastname:last_name,
         birth_day:birth_day,
         personal_id:personal_id,
+        email:email,
         address:address,
         avatar:avatar,
     });

@@ -10,6 +10,7 @@ import updateUserReducer from '../features/user/updateUser';
 import bookingFormReducer from '../features/booking/BookingForm';
 import mannagerBookingReducer from '../features/booking/ManagerBooking';
 import managerSingleBookingReducer from '../features/booking/ManagerSingleBooking';
+import vendorsReducer from '../features/user/getVendor';
 
 import libraryReducer from '../features/library/LibrarySlice';
 
@@ -21,6 +22,7 @@ const sagaMiddleware = createSagaMiddleware();
 export default configureStore({
    reducer: {
       counter: counterReducer, 
+      vendors: vendorsReducer,
       // User
       user: userReducer,
       userLogin: userLoginReducer,
