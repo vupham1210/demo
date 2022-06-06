@@ -7,7 +7,9 @@
 body #root{
     font-family: 'Montserrat', sans-serif;
 }
-
+.mainHeader .greeting .greetingMenu{
+    z-index: 99;
+}
 #main-buttons {
     background-image: url(https://minimalthemedemo.simplybook.it/v2/themes/minimal/img/main-image.jpg);
     position: relative;

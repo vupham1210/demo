@@ -17,13 +17,11 @@ export const getUserInfor = async (req, res, next) => {
   if(!user){
     return res.status(201).json('Lỗi đăng nhập');
   } else {
-    let avatarTable = await Images.findOne({_id: user.avatar });
-    let filePath = await ServerURI + `/upload/images/${avatarTable.image}`;
     const response = {
       firstname:user.firstname,
       lastname:user.lastname,
       address: user.address,
-      avatar: filePath,
+      avatar: user.avatar,
       birth_day: user.birth_day,
       email: user.email,
       personal_id: user.personal_id,
@@ -40,7 +38,8 @@ export const getAllUsers = async (req, res, next) => {
   let users;
    try {
      users = await User.find({ role: req.role = 'vendor'}).skip((req.page - 1) * req.perpage).limit(req.perpage);
-   } catch (err) {
+     
+    } catch (err) {
      console.log(err);
    }
 

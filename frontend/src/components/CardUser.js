@@ -10,13 +10,13 @@ const CardUser = ({data}) => {
                     <div className="preloader">
                         <a href="#">
                         <div className="user img">
-                            <img src='https://minimalthemedemo.simplybook.it/uploads/minimalthemedemo/image_files/preview/919fc4a7505dc24a39f3c0c8c8476673.jpg' alt="" className="fit" />
+                            <img src={data.avatar} alt="" className="fit" />
                         </div>
                         </a>
                     </div>
                     <div className="tab-pd">
                         <div className="content">
-                            <div className="cap short">{data.username}</div>
+                            <div className="cap short">{data.firstname} {data.lastname}</div>
                             <div className="bar with-mh">
                                     <div className="address d-flex"> 
                                     <GeoAlt width={25} height={25} className='me-2'/>

@@ -109,7 +109,7 @@ const UpdateAccountForm = () => {
       personal_id: inputPersonalID.current.value,
       address: inputAddress.current.value, 
       email: inputEmail.current.value,
-      avatar: avatarRedux ? avatarRedux._id : '',
+      avatar: avatarRedux ? avatarRedux.path : '',
       username: User.user_name ? User.user_name : '',
       token: User.token ? User.token : ''
     }
@@ -134,7 +134,7 @@ const UpdateAccountForm = () => {
   let ImagesData = useSelector(imagesSelected);
   const [selectGallery, setSelectGallery] = useState(false);
   const [open, setOpen] = useState(false);
-  console.log(User.avatar);
+  
   const handleOpenSingle = () => {
     setSelectGallery(false);  
     setOpen(true);
