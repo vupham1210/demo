@@ -11,6 +11,7 @@ import bookingFormReducer from '../features/booking/BookingForm';
 import mannagerBookingReducer from '../features/booking/ManagerBooking';
 import managerSingleBookingReducer from '../features/booking/ManagerSingleBooking';
 import vendorsReducer from '../features/user/getVendor';
+import subcriberReducer from '../features/user/getSubcriber';
 
 import libraryReducer from '../features/library/LibrarySlice';
 
@@ -23,6 +24,7 @@ export default configureStore({
    reducer: {
       counter: counterReducer, 
       vendors: vendorsReducer,
+      subcribers: subcriberReducer,
       // User
       user: userReducer,
       userLogin: userLoginReducer,

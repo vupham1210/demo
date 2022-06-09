@@ -31,14 +31,61 @@ export const getUserInfor = async (req, res, next) => {
     }
     return res.status(200).json(response);
   }
-  
 };
+
+export const getUserHandleInfor = async (req, res, next) => {
+  if(req.userId.user_id) {
+    let user;
+    try {
+      user = await User.findOne({_id: req.params.id });
+    } catch (error) {
+      console.log(error);
+    }
+    if(!user){
+      return res.status(201).json({message: "Not Found User!!!"});
+    } else {
+      const response = {
+        firstname: user.firstname,
+        lastname: user.lastname,
+        address: user.address,
+        avatar: user.avatar,
+        birth_day: user.birth_day,
+        email: user.email,
+        personal_id: user.personal_id,
+        phone: user.phone,
+        role: user.role,
+        username: user.username,
+      }
+      return res.status(200).json(response);
+    }
+  }else{
+    return res.status(404).json({ message: "Not Admin!!!" });
+  }
+};
+
+export const changeRoleUser = async (req,res,next) =>{
+  const user = await User.findById(req.params.id);
+
+  if(!user) return res.status(404).json("User not found!!!");
+  
+  try{
+    const updateUser = await User.findByIdAndUpdate(req.params.id,{
+      role: req.query.role,
+    });
+    return res.status(200).json(updateUser);
+  }catch (err) {
+    console.log(err);
+  }
+}
 
 export const getAllUsers = async (req, res, next) => {
   let users;
    try {
-     users = await User.find({ role: req.role = 'vendor'}).skip((req.page - 1) * req.perpage).limit(req.perpage);
-     
+     if(req.query.role){
+     users = await User.find({ role: req.query.role}).skip((req.query.page - 1) * req.query.perpage).limit(req.query.perpage);
+    }else{
+      users = await User.find();
+    }
     } catch (err) {
      console.log(err);
    }
@@ -57,7 +104,7 @@ export const loginUser = async (req, res, next) => {
     type: 'warning',
     error: true,
   };
-
+  console.log(req);
   const { username, password } = req.body;
   
   let user;
@@ -174,7 +221,7 @@ export const deleteUser = async (req, res, next) => {
   const id = req.params.id;
   let user;
   try {
-    user = await User.findByIdAndRemove(id);
+    user = await User.findById(id);
   } catch (err) {
     console.log(err);
   }

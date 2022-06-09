@@ -1,7 +1,9 @@
 import { Router } from "express";
 import { 
   getAllUsers,
-  getUserInfor, 
+  getUserInfor,
+  getUserHandleInfor,
+  changeRoleUser,
   addUser, 
   loginUser, 
   updateUser, 
@@ -18,6 +20,8 @@ const UserRouter = Router();
 
 UserRouter.get("/alls", getAllUsers);
 UserRouter.post("/", verifyToken, getUserInfor);
+UserRouter.get("/userhandle/:id",verifyToken, getUserHandleInfor);
+UserRouter.patch("/userhandle/:id",verifyToken,changeRoleUser);
 UserRouter.post("/add", addUser);
 UserRouter.post("/login", loginUser);
 UserRouter.post("/refresh-token", getRefreshToken);

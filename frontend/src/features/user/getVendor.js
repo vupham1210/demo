@@ -12,7 +12,7 @@ const initialState = {
 export const getVendorsInforAsync = createAsyncThunk(
     'vendorsslice/getVendor',
     async () => {
-      const link = `${getVendorInforAction}?role=vendor&page=1&perpage=2`;
+      const link = `${getVendorInforAction}?role=vendor&page=1&perpage=6`;
       const response = await axios.get(link).then((res) => { return res.data.users; })
       return response;
     }

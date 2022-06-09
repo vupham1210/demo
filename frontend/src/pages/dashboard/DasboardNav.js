@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { House, Calendar2Plus, CalendarWeek, PencilSquare, ArrowReturnRight, Images } from 'react-bootstrap-icons';
+import { House, People, Calendar2Plus, CalendarWeek, PencilSquare, ArrowReturnRight, Images } from 'react-bootstrap-icons';
 import { Link } from 'react-router-dom';
 import { Sidenav, Nav, Dropdown, Toggle } from 'rsuite';
 
@@ -20,6 +20,11 @@ const DasboardNav = () => {
               <Nav.Item as='li' className="ps-3" eventKey="1" icon={<House height={16} width={16} fill="black" className='me-2'/>}>
                   <Link to='/tai-khoan/trang-ca-nhan'>
                     Trang cá nhân
+                  </Link>
+              </Nav.Item> 
+              <Nav.Item as='li' className="ps-3" eventKey="1" icon={<People height={16} width={16} fill="black" className='me-2'/>}>
+                  <Link to='/tai-khoan/quan-ly-tai-khoan'>
+                    Quản lí tài khoản
                   </Link>
               </Nav.Item> 
               <Nav.Item as='li' className="ps-3" eventKey="2" icon={<Calendar2Plus height={16} width={16} fill="black" className='me-2'/>}>
