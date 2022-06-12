@@ -44,8 +44,13 @@ const Header = () => {
           <Nav className="me-auto">
             <Link className="nav-link" to={'/'}>Trang chủ</Link>
             <Link className="nav-link" to={'/booking/'}>Booking</Link>
+            { !userInformationSelect ? 
+            <>
             <Link className="nav-link" to={'/dang-ky'}>Đăng ký</Link>
             <Link className="nav-link" to={'/dang-nhap'}>Đăng nhập</Link>
+            </>
+            : ''
+            }
             </Nav>
         </Navbar.Collapse>
         {
@@ -54,7 +59,7 @@ const Header = () => {
               <div className="greeting me-3">
                 <span>Xin chào { userInformationSelect.username } <CaretDownFill /> </span>
                 <div className='greetingMenu'>
-                  <Link className='dropdown-link' to={'/tai-khoan'}>
+                  <Link className='btn btn-success mb-2' to={'/tai-khoan/trang-ca-nhan'}>
                     <Person />
                     Vào tài khoản</Link>
                   <Button onClick={() => { loggout(); }}>

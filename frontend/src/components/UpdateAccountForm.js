@@ -54,47 +54,47 @@ const UpdateAccountForm = () => {
 
   const updateFormData = () => {
 
-    if(inputFirstName.current.value == ''){
+    if(inputFirstName.current.value === ''){
       inputFirstName.current.focus();
       setIsValidInputFirstName(false);
     } else {
       setIsValidInputFirstName(true);
     }
     // 
-    if(inputLastName.current.value == ''){
+    if(inputLastName.current.value === ''){
       inputLastName.current.focus();
       setIsValidInputLastName(false);
     } else {
       setIsValidInputLastName(true);
     }
     //
-    if(inputPersonalID.current.value == ''){
+    if(inputPersonalID.current.value === ''){
       inputPersonalID.current.focus();
       setIsValidInputPersonalID(false);
     } else {
       setIsValidInputPersonalID(true);
     }
-    if(inputBirthDay.current.value == ''){
+    if(inputBirthDay.current.value === ''){
       inputBirthDay.current.focus();
       setIsValidInputBirthDay(false);
     } else {
       setIsValidInputBirthDay(true);
     }
-    if(inputEmail.current.value == ''){
+    if(inputEmail.current.value === ''){
       inputEmail.current.focus();
       setIsValidInputEmail(false);
     } else {
       setIsValidInputEmail(true);
     }
 
-    if(inputPhone.current.value == ''){
+    if(inputPhone.current.value === ''){
       inputPhone.current.focus();
       setIsValidInputPhone(false);
     } else {
       setIsValidInputPhone(true);
     } 
     
-    if(inputAddress.current.value == ''){
+    if(inputAddress.current.value === ''){
       inputAddress.current.focus();
       setIsValidInputAddress(false);
     } else {
@@ -164,8 +164,8 @@ const UpdateAccountForm = () => {
                     <Form.Group className='mb-3'>
                       <div className='uploadThumbnail'>
                         <div onClick={() => { handleOpenSingle() }}>
-                          {avatarRedux ? 
-                          <img width={200} height={200} src={avatarRedux.path}/>
+                          { (User?.avatar || avatarRedux) ? 
+                          <img width={200} height={200} src={User?.avatar}/>
                           : 
                           <div>
                           <Image height={60} width={60} />
@@ -222,7 +222,7 @@ const UpdateAccountForm = () => {
                   <Form.Group className="mb-3">
                     <Form.Label>Ngày sinh</Form.Label>
                     <Form.Control 
-                    defaultValue={User ? format(new Date(User.birth_day), 'yyyy-MM-dd') : ''}
+                    defaultValue={User?.birth_day ? format(new Date(User?.birth_day), 'yyyy-MM-dd') : ''}
                     className={!isValidInputBirthDay && 'formHelp'} 
                     ref={inputBirthDay} 
                     type="date" 

@@ -57,7 +57,7 @@ const Login = () => {
 
     if(isAllValidate){
       dispatch(loginUserAsync(loginForm));
-      return navigate('/tai-khoan/')
+      return navigate('/tai-khoan/trang-ca-nhan')
     }
   }, [loginForm])
 
@@ -79,6 +79,11 @@ const Login = () => {
           <Button onClick={onButtonClick}>Đăng nhập</Button>
         </Form.Group>
       </Form>
+      <div className='d-block'>
+        <h2>Tài khoản Admin</h2>
+        <p>Username: admin</p>
+        <p>Password: admin</p>
+      </div>
     </>
     
   )

@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Table, Button, Row, Col } from 'react-bootstrap';
 import { format } from 'date-fns'
 import { Modal } from 'rsuite';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getVendorsInforAsync, VendorsData } from '../../features/user/getVendor';
 import { getSubscribersInforAsync, SubcribersData } from '../../features/user/getSubcriber';
+import { getUserInforAsync, userInformation } from '../../features/user/userSlice';
 import { AxiosInstance } from '../../features/Instance';
 import swal from 'sweetalert2';
 
@@ -14,11 +15,13 @@ const urlUserHandle = `${process.env.REACT_APP_SERVER_URL}/users`;
 
 const UserManager = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const vendor = useSelector(VendorsData);
   const subcriber = useSelector(SubcribersData);
-  const [userhandle,setUserHandle] = useState('');
+  const UserNow = useSelector(userInformation);
 
   useEffect(()=>{
+    dispatch(getUserInforAsync())
     dispatch(getVendorsInforAsync())
     dispatch(getSubscribersInforAsync())
   },[dispatch])
@@ -54,9 +57,9 @@ const UserManager = () => {
       });
       dispatch(getVendorsInforAsync())
       dispatch(getSubscribersInforAsync())
-    }).catch((err) => { 
+    }).catch((res) => { 
       swal.fire({
-        text: "Chưa được cập nhật",
+        text: res.message,
         icon: "error",
         type: "error"
       });
@@ -96,7 +99,7 @@ const UserManager = () => {
           </Modal.Title>
         </Modal.Header> 
         <Modal.Body>
-          <Row>
+          <Row className='m-0'>
             <Col lg={6}>
               <div className='img-user text-center'>
                 {userhandle.avatar ? 
@@ -120,7 +123,7 @@ const UserManager = () => {
       </>
     )
   }
-  if(vendor && subcriber){
+  if(vendor && subcriber && (UserNow.role == 'admin')){
   return (
   <div>
     <h2 className='title-table pb-3'>Tài khoản khách thuê dịch vụ</h2>
@@ -205,7 +208,7 @@ const UserManager = () => {
           }  
           </tbody>
           </Table>
-          <Modal size={'md'} open={open} onClose={handleClose}>
+          <Modal size={'md'} open={open} onClose={handleClose} aria-labelledby="contained-modal-title-vcenter" centered="true">
               <UserView data={userData}/>
               <Modal.Footer>
                 <Button variant='danger' className='me-2' onClick={handleClose} appearance="subtle">
@@ -216,7 +219,7 @@ const UserManager = () => {
   </div>
   )
 }else{
-  return 'loading'
+  return navigate("/tai-khoan/trang-ca-nhan");
 }
 }
 

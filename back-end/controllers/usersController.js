@@ -65,16 +65,19 @@ export const getUserHandleInfor = async (req, res, next) => {
 
 export const changeRoleUser = async (req,res,next) =>{
   const user = await User.findById(req.params.id);
-
+  const userAdmin = await User.findOne({_id: req.userId.user_id });
   if(!user) return res.status(404).json("User not found!!!");
-  
-  try{
-    const updateUser = await User.findByIdAndUpdate(req.params.id,{
-      role: req.query.role,
-    });
-    return res.status(200).json(updateUser);
-  }catch (err) {
-    console.log(err);
+  if(userAdmin.role == 'admin'){
+    try{
+      const updateUser = await User.findByIdAndUpdate(req.params.id,{
+        role: req.query.role,
+      });
+      return res.status(200).json(updateUser);
+    }catch (err) {
+      console.log(err);
+    }
+  }else{
+    return res.status(404).json({ message: "User not admin don't change role other user!!!"});
   }
 }
 
@@ -219,16 +222,21 @@ export const updateUser = async (req, res, next) => {
 
 export const deleteUser = async (req, res, next) => {
   const id = req.params.id;
+  const userAdmin = await User.findOne({_id: req.userId.user_id });
   let user;
-  try {
-    user = await User.findById(id);
-  } catch (err) {
-    console.log(err);
+  if(userAdmin.role == 'admin'){
+    try {
+      user = await User.findById(id);
+    } catch (err) {
+      console.log(err);
+    }
+    if (!user) {
+      return res.status(404).json({ message: "Unable To Delete By this ID" });
+    }
+    return res.status(200).json({ message: "User Successfully Deleted" });
+  }else{
+    return res.status(404).json({ message: "Bạn không phải admin nên không có quyền hạn này!!!" });
   }
-  if (!user) {
-    return res.status(404).json({ message: "Unable To Delete By this ID" });
-  }
-  return res.status(200).json({ message: "User Successfully Deleted" });
 };
 
 // Refresh Token

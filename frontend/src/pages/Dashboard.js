@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Container, Row, Col, Button, Card, ListGroup, Form } from 'react-bootstrap'
-import { House, Calendar2Plus, CalendarWeek, PencilSquare, ArrowReturnRight, Images } from 'react-bootstrap-icons';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Container, Row, Col} from 'react-bootstrap'
+import { useParams } from 'react-router-dom';
 import DasboardPanel from './dashboard/DasboardPanel';
 import DasboardNav from './dashboard/DasboardNav';
 
@@ -12,10 +11,10 @@ const Dashboard = () => {
   return (
     <Container className="py-4">
       <Row>
-        <Col className='col-auto'>
+        <Col xs={12} md={3}>
             <DasboardNav />
         </Col>
-        <Col>
+        <Col xs={12} md={8}>
             <DasboardPanel page={slug} />
         </Col>
       </Row>
