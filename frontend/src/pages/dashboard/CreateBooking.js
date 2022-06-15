@@ -14,6 +14,7 @@ import { setThumbnail,
          updateTimerData,
          setContent,
          setTitle,
+         setDescription,
          setDatePicker,
          setLocation,
          addField,
@@ -25,24 +26,25 @@ import Library from '../../components/Library';
 import { XLg } from 'react-bootstrap-icons';
 import Swal from 'sweetalert2';
 import { v4 as uuidv4 } from 'uuid';
+import {useNavigate} from 'react-router-dom';
 
 const {
   beforeToday,
 } = DateRangePicker;
 
 
-function previewFile(file, callback) {
-  const reader = new FileReader();
-  reader.onloadend = () => {
-    callback(reader.result);
-  };
-  reader.readAsDataURL(file);
-}
+// function previewFile(file, callback) {
+//   const reader = new FileReader();
+//   reader.onloadend = () => {
+//     callback(reader.result);
+//   };
+//   reader.readAsDataURL(file);
+// }
 
-const stylesDragger = {
-  width: '100%',
-  height: 120
-};
+// const stylesDragger = {
+//   width: '100%',
+//   height: 120
+// };
 
 const GalleryImages = (props) => {
   return (
@@ -200,7 +202,7 @@ const AddTimer = () => {
         </Modal.Header>
         <Modal.Body>
         <Row className="m-0">
-            <Col xs={12}>
+            {/* <Col xs={12}>
                 <Form.Group className='mb-3'>
                   <Form.ControlLabel>
                     Tiêu đề
@@ -224,7 +226,7 @@ const AddTimer = () => {
                   name="content" 
                   as="textarea" />
                 </Form.Group>
-            </Col>
+            </Col> */}
             <Col xs={12}>
               <Form.Group className="mb-3">
                 <Form.ControlLabel>Giờ bắt đầu: </Form.ControlLabel>
@@ -246,7 +248,7 @@ const AddTimer = () => {
                   />
               </Form.Group>
             </Col>
-            <Col  xs={12}>
+            {/* <Col  xs={12}>
               <Form.Group className="mb-3">
                 <Form.ControlLabel>Sô lượng: </Form.ControlLabel>
                   <InputNumber 
@@ -257,7 +259,7 @@ const AddTimer = () => {
                   onChange={(e) => { setHourStateMent({...hourStateMent, qty: e}) }}
                   />
               </Form.Group>
-            </Col>
+            </Col> */}
           </Row>
         </Modal.Body>
         <Modal.Footer>
@@ -284,7 +286,8 @@ const AddTimer = () => {
 
 
 const CreateBooking = () => {
-
+  
+  const navigate =useNavigate();
   const dispatch = useDispatch();
   let formData = useSelector(dataBookingForm);
   let ImagesData = useSelector(imagesSelected);
@@ -405,14 +408,14 @@ const CreateBooking = () => {
     const form = {
       title: formData.title,
       content: formData.content,
-      description: 'demo',
+      description: formData.description,
       thumbnail: formData.thumbnail ? formData.thumbnail : '',
       gallery: formData.gallery ? formData.gallery : [],
       postIn: new Date(),
       status: 'pending',
       // Booking Post
       time: formData.time ? formData.time : [],
-      location: formData.time.location ? formData.time.location : '',
+      location: formData.time.location ,//? formData.time.location : '',
       startDate: formData.startDate ? formData.startDate : '',
       startEnd: formData.endDate ? formData.endDate : '',
     }
@@ -427,6 +430,9 @@ const CreateBooking = () => {
       toaster.push(<Message showIcon type="error">Một hoặc nhiều trường bị thiếu thông tin</Message>);
       return;
     }
+    else{
+      navigate("/tai-khoan/quan-ly-lich-hen");
+    }
 
     toaster.push(<Message showIcon type="success">Đang gửi dữ liệu</Message>);
 
@@ -435,7 +441,7 @@ const CreateBooking = () => {
   }
 
   return (
-    <Panel header={'Đăng dữ liệu'} shaded bordered bodyFill>
+    <Panel header={'Nhập thông tin'} shaded bordered bodyFill>
       <Form 
           as='form' 
           fluid 
@@ -452,6 +458,14 @@ const CreateBooking = () => {
                               Tiêu đề
                             </Form.ControlLabel>
                             <Form.Control onChange={(e) => { dispatch(setTitle(e)); }} value={formData.title} name="title" placeholder='Nhập tiêu đề'/>
+                          </Form.Group>
+                        </Col>
+                        <Col xs={12}>
+                          <Form.Group className='mb-3'>
+                            <Form.ControlLabel>
+                              Mô tả
+                            </Form.ControlLabel>
+                            <Form.Control onChange={(e) => { dispatch(setDescription(e)); }} value={formData.description} name="description" placeholder='Nhập mô tả'/>
                           </Form.Group>
                         </Col>
                         <Col xs={12}>
@@ -508,6 +522,9 @@ const CreateBooking = () => {
                         <Col xs={12}>
                           <AddTimer />
                         </Col>
+                        <Col className='mb-3' xs={12}>
+                        <Button type='submit' appearance="primary">Đăng thông tin</Button>
+                        </Col>
                   </Row>
                 </Col>
                 <Col xs={12} sm={12} md={4}>
@@ -531,7 +548,7 @@ const CreateBooking = () => {
                               </div>
                           </Form.Group>
                         </Col>
-                        <Col xs={12}>
+                        {/* <Col xs={12}>
                         <Form.Group className='mb-3' onClick={handleOpenMultipe}>
                             <Form.ControlLabel>
                               Gallery
@@ -547,14 +564,14 @@ const CreateBooking = () => {
                             </div>
                             
                           </Form.Group>
-                        </Col>
-                        <Col xs={12}>
-                          <Button type='submit'>Đăng thông tin</Button>
-                        </Col>
+                        </Col> */}
+                        {/* <Col xs={12}>
+                          <Button type='submit' appearance="primary">Đăng thông tin</Button>
+                        </Col> */}
                     </Row>
                 </Col>
               </Row>
-              <Modal size={'md'} open={open} onClose={handleClose}>
+              {/* <Modal size={'md'} open={open} onClose={handleClose}>
                 <Modal.Header>
                   <Modal.Title>Modal Title</Modal.Title>
                 </Modal.Header>
@@ -569,7 +586,7 @@ const CreateBooking = () => {
                     Chọn hình ảnh
                   </Button>
                 </Modal.Footer>
-              </Modal>
+              </Modal> */}
           </Form>
     </Panel>
   )

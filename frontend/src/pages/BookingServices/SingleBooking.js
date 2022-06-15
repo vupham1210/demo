@@ -28,7 +28,7 @@ const SingleBooking = () => {
         return (
             <Row>
                 <Col xs={6}>
-                    <Card>
+                    <Card className='mt-3'>
                         <Card.Header>
                             {
                                 SingleData.thumbnail ? <img className='w-100' src={SingleData.thumbnail.path} /> : ''
@@ -45,15 +45,16 @@ const SingleBooking = () => {
                             </p>
                         </Card.Header>
                         <Card.Body>
+                            {/* <p>{SingleData.location}</p> */}
                             <p>{SingleData.content}</p>
                         </Card.Body>
                     </Card>
                 </Col>
-                <Col xs={4}>
+                <Col className='mt-3' xs={4}>
                     {
                         SingleData.time ? 
                             <>
-                                <h3>Giờ tham dự</h3>
+                                <h3>Thời gian</h3>
                                 <ListGroup>
                                     {
                                         SingleData.time.map((val, index) => {
@@ -63,7 +64,7 @@ const SingleBooking = () => {
                                         })
                                     }
                                 </ListGroup>
-                                <Button color="blue" appearance="primary">Đăng ký</Button>
+                                <Button className='mt-3' color="blue" appearance="primary">Đăng ký</Button>
                             </>
                         : ''
                     }

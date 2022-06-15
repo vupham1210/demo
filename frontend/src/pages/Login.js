@@ -67,12 +67,12 @@ const Login = () => {
       <Form>
         <Form.Group className="mb-3">
           <Form.Label>Tên đăng nhập</Form.Label>
-          <Form.Control defaultValue={'hoanpro698'} ref={inputUserName} className={!isValidUserName && 'formHelp'} placeholder="Tên tài khoản"/>
+          <Form.Control defaultValue={'admin'} ref={inputUserName} className={!isValidUserName && 'formHelp'} placeholder="Tên tài khoản"/>
           {!isValidUserName && <span className="inlineHelp"> Tên tài khoản không được để trống! </span>}
         </Form.Group>
         <Form.Group className="mb-3">
           <Form.Label>Mật khẩu</Form.Label>
-          <Form.Control defaultValue={'01272345hoan'} ref={inputPassword} className={!isValidPassword && 'formHelp'} placeholder="Mật khẩu"/>
+          <Form.Control defaultValue={'admin'} ref={inputPassword} className={!isValidPassword && 'formHelp'} placeholder="Mật khẩu"/>
           {!isValidPassword && <span className="inlineHelp"> Mật khẩu không được để trống! </span>}
         </Form.Group>
         <Form.Group className="mb-3">
