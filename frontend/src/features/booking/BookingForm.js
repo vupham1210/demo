@@ -11,6 +11,7 @@ const initialState = {
     thumbnail: '',
     gallery: [],
     title: '',
+    description:'',
     content: '',
     customfield: [],
     rangerDatePicker: false,
@@ -100,6 +101,9 @@ export const bookingSlice = createSlice({
     setTitle:(state, action) => {
       state.formData.title = action.payload;
     },
+    setDescription:(state, action) => {
+      state.formData.description = action.payload;
+    },
     setContent:(state, action) => {
       state.formData.content = action.payload;
     },
@@ -146,6 +150,7 @@ export const {
               setContent,
               setLocation,
               setTitle,
+              setDescription,
               setDatePicker,
               addField,
               removeField,
