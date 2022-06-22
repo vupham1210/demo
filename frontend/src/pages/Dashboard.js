@@ -14,7 +14,7 @@ const Dashboard = () => {
         <Col xs={12} md={3}>
             <DasboardNav />
         </Col>
-        <Col xs={12} md={8}>
+        <Col xs={12} md={9}>
             <DasboardPanel page={slug} />
         </Col>
       </Row>

@@ -5,19 +5,14 @@ import Swal from "sweetalert2";
 const userUpdateAction = `${process.env.REACT_APP_SERVER_URL}/users/update`;
 const createBooking = `${process.env.REACT_APP_SERVER_URL}/booking/add/`;
 
-const initialState = {
+const initialState = { 
   status: 'idle',
   formData: {
     thumbnail: '',
     gallery: [],
     title: '',
     content: '',
-    field: [
-      {
-        fieldName: '',
-        fieldContent: '',
-      }
-    ],
+    customfield: [],
     rangerDatePicker: false,
     startDate: '',
     endDate: '',
@@ -118,24 +113,13 @@ export const bookingSlice = createSlice({
       let PreviousState = state.formData.field;
       let indexed = action.payload;
       PreviousState.splice(indexed, 1)
-      state.formData.field = PreviousState;
+      state.formData.customfield = PreviousState;
     },
     addField: (state, action) => {
       const PreviousState = state.formData.field;
       const payload = action.payload;
-      state.formData.field = [...PreviousState, payload];
+      state.formData.customfield = [...PreviousState, payload];
     },
-    addFieldTitleData: (state, action) => {
-      const index = action.payload.index;
-      const value = action.payload.value;
-      state.formData.field[index].fieldName = value;
-    },
-    addFieldContentData: (state, action) => {
-      const index = action.payload.index;
-      const value = action.payload.value;
-      state.formData.field[index].fieldContent = value;
-    }
-    
   },
   extraReducers: (builder) => {
     builder

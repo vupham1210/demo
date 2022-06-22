@@ -101,7 +101,6 @@ const UpdateAccountForm = () => {
       setIsValidInputAddress(true);
     }
 
-
     let Form =  {
       first_name: inputFirstName.current.value,
       last_name: inputLastName.current.value,
@@ -117,12 +116,6 @@ const UpdateAccountForm = () => {
     setFormData(Form);
     
     let isAllValidate = true;
-    // for (const iterator in formData) {
-    //   if (!formData.hasOwnProperty(iterator)) continue;
-    //   if(formData[iterator] == '' && iterator != 'avatar'){
-    //     isAllValidate = false
-    //   }
-    // }
 
     if(isAllValidate){
       dispatch(updateUserAsync(formData));

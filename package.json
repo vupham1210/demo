@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "react-slugify": "^2.1.0"
+  }
+}

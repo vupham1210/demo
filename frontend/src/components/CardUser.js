@@ -1,7 +1,9 @@
 import React from 'react';
 import { GeoAlt } from 'react-bootstrap-icons';
+import { useNavigate  } from 'react-router-dom'
 
 const CardUser = ({data}) => {
+    let navigate = useNavigate();
     if(data != undefined){
         return (
             <div className="location-item item">
@@ -28,7 +30,7 @@ const CardUser = ({data}) => {
                         </div>
                     <div className="btn-bar">
                         <div className="btn select custom">
-                            <a href="#">Select</a>
+                            <a onClick={()=> { navigate("/booking-id/" + data._id, { replace: true }) }}>Select Schedule</a>
                         </div>
                     </div>
                     </div>

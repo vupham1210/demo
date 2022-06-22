@@ -3,7 +3,7 @@ import Vendor from '../components/Vendor';
 
 const Home = () => {
   return (
-    <div>
+    <>
       <div id="main-buttons">
         <div className="container-fluid column">
           <div className="wrapper">
@@ -28,7 +28,7 @@ const Home = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

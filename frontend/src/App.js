@@ -11,12 +11,14 @@ import {
 
 import SingleBooking from './pages/BookingServices/SingleBooking';
 import ArchiveBooking from './pages/BookingServices/ArchiveBooking';
+import BookingOfUser from './pages/BookingServices/BookingOfUser';
 
 import Home from './pages/Home';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import Account from './pages/dashboard/Account';
 import Dashboard from './pages/Dashboard';
+
 
 function App() {
   return (
@@ -34,6 +36,7 @@ function App() {
           
           <Route path="/booking/" element={ <ArchiveBooking /> } />
           <Route path="/booking/:slug" element={ <SingleBooking /> } />
+          <Route path="/booking-id/:iduser" element={ <BookingOfUser/>} />
         </Routes>
       </div>
     </Router>

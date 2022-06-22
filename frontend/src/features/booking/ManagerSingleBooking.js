@@ -7,6 +7,7 @@ const getBooking = `${process.env.REACT_APP_SERVER_URL}/booking/get`;
 const initialState = {
   status: 'idle',
   data: '',
+  formdata: '',
 }
 
 // create Booking Async
@@ -42,5 +43,7 @@ export const managerSingleBookingSlice = createSlice({
 
 export const dataSingleBookingServices = (state) => state.managerSingleBooking.data;
 export const statusSingleBookingServices = (state) => state.managerSingleBooking.status;
+
+
 
 export default managerSingleBookingSlice.reducer;

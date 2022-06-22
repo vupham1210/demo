@@ -1,9 +1,11 @@
 import React, { useRef, useState } from 'react'
 import {  Row, Col, Card } from 'react-bootstrap';
 import { Image, Calendar, PeopleFill, ListCheck, PlusLg, Pencil, Eraser, ThreeDotsVertical } from 'react-bootstrap-icons';
-import { DateRangePicker, DatePicker, Toggle, Checkbox, Nav, Tag, TagGroup, Button } from 'rsuite';
+import { DateRangePicker, DatePicker, Toggle, Checkbox, Nav, Tag, TagGroup, Button, SelectPicker } from 'rsuite';
 import { toaster, Message, Form, Input, InputNumber, Schema, Modal, CheckboxGroup, List, Panel  } from 'rsuite';
 import { useDispatch, useSelector } from 'react-redux';
+import slugify from 'react-slugify';
+
 import { setThumbnail,
          setGallery,
          dataBookingForm,
@@ -25,6 +27,7 @@ import Library from '../../components/Library';
 import { XLg } from 'react-bootstrap-icons';
 import Swal from 'sweetalert2';
 import { v4 as uuidv4 } from 'uuid';
+import FormControl from 'rsuite/esm/FormControl';
 
 const {
   beforeToday,
@@ -67,9 +70,11 @@ const AddTimer = () => {
   const dispatch = useDispatch();
   let formData = useSelector(dataBookingForm);
   let hourState = formData.time;
+
   const[openHour, setOpenHour] = useState(false);
   const[editHour, setEditHour] = useState(false);
   const[checkedHour, setCheckedHour] = useState([]);
+  
 
   const[hourStateMent, setHourStateMent] = useState({
     title: '',
@@ -127,6 +132,9 @@ const AddTimer = () => {
     dispatch(updateTimerData({index: index, value: hourStateMent}));
     handleCloseHour();
   } 
+
+
+  
 
   return hourState ? 
   <>
@@ -188,11 +196,17 @@ const AddTimer = () => {
     </List>
     </CheckboxGroup>
 
+    
+
     <Nav className='mb-3'>
       <Nav.Item className={'me-2'}><ThreeDotsVertical className='me-2'/>Chọn tất cả</Nav.Item>
       <Nav.Item className={'me-2'} onClick={handleOpenHour}><PlusLg className='me-2'/> Thêm giờ</Nav.Item>
       <Nav.Item className={'me-2'} onClick={handleClearHour}><Eraser className='me-2'/>Xóa</Nav.Item>
     </Nav>
+
+
+    
+    
 
     <Modal size={'md'} open={openHour} onClose={handleCloseHour}>
         <Modal.Header>
@@ -293,7 +307,85 @@ const CreateBooking = () => {
   let fieldState = formData.field;
 
   const [selectGallery, setSelectGallery] = useState(false);
+  const [keySlug, setKeySlug] = useState('');
+  const [openAddField, setOpenAddField] = useState(false);
+  const FormAddFielRef = useRef();
 
+  const [FormList, setFormList] = useState([
+    {
+      name: 'Họ và tên',
+      key: 'fullname',
+      type: 'text'
+    },{
+      name: 'Địa chỉ Email',
+      key: 'email',
+      type: 'email'
+    },{
+      name: 'Số điện thoại',
+      key: 'phone',
+      type: 'text'
+    },{
+      name: 'Địa chỉ',
+      key: 'address',
+      type: 'text'
+    }
+  ])
+  
+  const addCustomField = () => {
+    setOpenAddField(false)
+  }
+
+  // Sort 
+  const handleCloseField = () => {
+    setOpenAddField(false);
+    setKeySlug('');
+  }
+
+  const handleSortEnd = ({ oldIndex, newIndex }) =>
+    setFormList(prvData => {
+      const moveData = prvData.splice(oldIndex, 1);
+      const newData = [...prvData];
+      newData.splice(newIndex, 0, moveData[0]);
+      return newData;
+  }, []);
+
+  const typeInputData = [
+    {
+      "label": "Văn bản ngắn",
+      "value": "text",
+    },
+    {
+      "label": "Văn bản dài",
+      "value": "textarea",
+    },
+    {
+      "label": "Số",
+      "value": "number",
+    },
+    {
+      "label": "Email",
+      "value": "email",
+    },
+  ];
+
+  const SubmitDataField = (e) => {
+    
+    const data = new FormData(FormAddFielRef.current.root);
+
+    const formDataObj = {};
+    data.forEach((value, key) => (formDataObj[key] = value));
+    console.log(formDataObj);
+    setFormList([...FormList,formDataObj]);
+    setKeySlug('');
+    setOpenAddField(false);
+  }
+
+  const DeleteField = (keyID) => {
+    let databd = FormList;
+    databd.splice(keyID,1);
+    setFormList(databd);
+    handleSortEnd(true);
+  }
 
   const model = Schema.Model({
     title: Schema.Types.StringType().isRequired('Tiêu đề là bắt buộc.'),
@@ -342,63 +434,6 @@ const CreateBooking = () => {
     }
   }
 
-  const NewField = () => {
-    dispatch(addField({
-      fieldName: '',
-      fieldContent: '',
-    }))
-  }
-
-  const removeFieldData = (index) => {
-    dispatch(removeField(index))
-  }
-
-  const AddField = () => {
-    
-    const [fieldData, setFieldData ] = useState({
-      fieldTitle: '',
-      fieldContent: '',
-    });
-
-    return fieldState ? 
-      fieldState.map((val, index) => {
-        return(
-            <Col xs={12} key={index}>
-              <Row className="align-items-end bg-light m-0 mb-3 py-2 rounded mt-3">
-                <Col xs={12}>
-                  <Form.Group className="mb-3">
-                    <Form.ControlLabel>Tiêu đề: </Form.ControlLabel>
-                    <Input 
-                      value={fieldData.fieldTitle}
-                      onChange={(e) => { setFieldData({...fieldData, fieldTitle:e} )} } 
-                      name="fieldTitle[]"
-                    />
-                  </Form.Group>
-                </Col>
-                <Col xs={12}>
-                  <Form.Group className="mb-3">
-                    <Form.ControlLabel>Nội dung: </Form.ControlLabel>
-                    <Input 
-                      value={fieldData.fieldContent}
-                      rows={3} 
-                      as="textarea"
-                      name="fieldContent[]"
-                      onChange={(e) => { setFieldData({...fieldData, fieldContent:e} )} } 
-                      />
-                  </Form.Group>
-                </Col>
-                <Col className='col-auto'>
-                  <Form.Group className="mb-3">
-                    <Button variant='danger' size='sm' type='button' className="border-none" onClick={() => { removeFieldData(index) }}>
-                        <XLg width={16} height={16}/>
-                    </Button>
-                  </Form.Group>
-                </Col>
-              </Row>
-            </Col>
-          )
-      }) : '';
-  }
 
   const SubmitForm = (e) => {
     
@@ -415,9 +450,8 @@ const CreateBooking = () => {
       location: formData.time.location ? formData.time.location : '',
       startDate: formData.startDate ? formData.startDate : '',
       startEnd: formData.endDate ? formData.endDate : '',
+      customfield: FormList ? FormList : [],
     }
-
-    
 
     const data = new FormData(e.target);
 
@@ -506,8 +540,61 @@ const CreateBooking = () => {
                           </Form.Group>
                         </Col>
                         <Col xs={12}>
-                          <AddTimer />
+                          <div className='card p-3 mb-2'>
+                            <AddTimer />
+                          </div>
                         </Col>
+                        <Col xs={12}>
+                        <div className='card p-3'>
+                          <h4 className='mb-3'>Các trường yêu cầu</h4>
+                            <List bordered sortable onSort={handleSortEnd}>
+                                {FormList.map((val, index) => (
+                                  <List.Item key={val.key} index={index} collection={1}>
+                                    <div className='d-flex justify-content-between align-items-center'>
+                                    {val.name}
+                                    <Button  onClick={() => DeleteField(index)}>Xóa Trường</Button>
+                                    </div>
+                                  </List.Item>
+                                ))}
+                              </List>
+                          <Nav className='mb-3'>
+                            <Nav.Item className={'me-2'} onClick={setOpenAddField}><PlusLg className='me-2'/> Nội dung yêu cầu</Nav.Item>
+                          </Nav>
+                        </div>
+                        
+                        <Modal open={openAddField} onClose={handleCloseField}>
+                        <Modal.Header>
+                          <Modal.Title><h5>Thêm trường tùy chỉnh</h5></Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Form 
+                              fluid
+                              ref={FormAddFielRef}
+                              onSubmit={(e) => { SubmitDataField(e) }}
+                            >
+                                <Form.Group>
+                                  <Form.ControlLabel>Tiêu đề</Form.ControlLabel>
+                                  <Form.Control name="name" value={EventTarget.value} onChange={(e) => setKeySlug(slugify(e))}/>
+                                </Form.Group>
+                                <Form.Group>
+                                  <Form.ControlLabel>ID</Form.ControlLabel>
+                                  <Form.Control name="key" value={keySlug} readOnly/>
+                                </Form.Group>
+                                <Form.Group>
+                                  <Form.ControlLabel>Loại</Form.ControlLabel>
+                                  <Form.Control name="type" value={EventTarget.value} placeholder='VD: text, textarea, number, email'/>
+                                </Form.Group>
+                                <div className="text-end">
+                                  <Button appearance="subtle" className='me-2' onClick={handleCloseField}>
+                                    Đóng
+                                  </Button>
+                                  <Button appearance="primary" type='submit' className='me-2'>Thêm trường nhập</Button>
+                                </div>
+                            </Form>
+                        </Modal.Body>
+                    </Modal>
+                        </Col>
+                        
                   </Row>
                 </Col>
                 <Col xs={12} sm={12} md={4}>
@@ -536,7 +623,7 @@ const CreateBooking = () => {
                             <Form.ControlLabel>
                               Gallery
                             </Form.ControlLabel>
-                            <div className='py-3'>
+                            <div className='py-2'>
                               <div style={stylesDragger} className='uploadGallery py-3'>
                                 {
                                   formData.gallery.length > 0 ? 

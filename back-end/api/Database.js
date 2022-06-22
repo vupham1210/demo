@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import UserRouter from "../routes/userRoutes.js";
 import ServicesBookingRouter from "../routes/ServicesBookingRouter.js";
 import UploadRouter from "../routes/UploadFilesRouter.js";
+import ScheduleBookingRouter from "../routes/ScheduleBookingRouter.js";
 import bodyParser from "body-parser";
 import { __dirname } from "../path.js";
 import vhost from "vhost";
@@ -23,6 +24,7 @@ app.use(cors());
 app.use("/users", UserRouter);
 app.use("/booking", ServicesBookingRouter);
 app.use("/upload", UploadRouter);
+app.use("/schedule",ScheduleBookingRouter)
 
 const name = {
   'demo1' : 'demdodjfkfk',

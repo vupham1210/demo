@@ -95,6 +95,52 @@ export const getBooking = async (req, res) => {
     }
     res.status(400).json(response);
 }
+export const getBookingByIDUser = async (req, res) => {
+    let response = {
+        title: "Lỗi xảy ra",
+        message: "Đã có lỗi xảy ra trong quá trình lấy dữ liệu",
+        type: 'warning',
+        error: true,
+        status: 201,
+    };
+
+    let BookingForm;
+    const author = req.params.iduser ? req.params.iduser : '';
+    
+    let params = {
+        author: author
+    }
+
+
+    try {
+        if(author){
+            BookingForm = await ServicesBooking.find(params);
+            if(BookingForm){
+                response = {
+                    title: "Thành công",
+                    message: "lấy dữ liệu thành công",
+                    type: 'success',
+                    error: true,
+                    status: 200,
+                };
+                return res.status(200).json(BookingForm);
+            }
+        } else {
+            response = {
+                title: "Lỗi xảy ra",
+                message: "Tài khoản không hợp lệ",
+                type: 'warning',
+                error: true,
+                status: 201,
+            };
+            res.status(201).json(response);
+        }
+        
+    } catch (error) {
+        console.log(error)
+    }
+    res.status(400).json(response);
+}
 
 export const addBooking = async (req, res) => {
 
@@ -138,6 +184,7 @@ export const addBooking = async (req, res) => {
             startEnd: req.body.startEnd ? req.body.startEnd : '',
             time: req.body.time,
             author: req.userId.user_id,
+            custom_field: req.body.customfield? req.body.customfield : [],
           });
 
         await bookingservices.save();
