@@ -18,9 +18,6 @@ const BookingGig = ({ booking }) => {
             </Link>}>
           <p>
             <small>
-              {
-                booking.thumbnail ? <img className='w-100' src={booking.thumbnail.path} alt={booking.description} /> : ''
-              }
               {booking.description}
             </small>
           </p>

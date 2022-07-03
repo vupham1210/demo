@@ -7,6 +7,10 @@ const ScheduleSchema = new Schema({
         type: String,
         required: true,
     },
+    titleService: {
+        type: String,
+        required: true,
+    },
     idAuthor: {
         type: String,
         required: true,

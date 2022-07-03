@@ -14,8 +14,12 @@ import bookingFormReducer from '../features/booking/BookingForm';
 import mannagerBookingReducer from '../features/booking/ManagerBooking';
 import managerSingleBookingReducer from '../features/booking/ManagerSingleBooking';
 import getBookingByIdUserReducer from '../features/booking/GetBookingByIdUser';
+import getBookingByIdReducer from '../features/booking/GetBookingById';
+import UpdateBookingQty from '../features/booking/UpdateBookingQty';
 
 import scheduleFormReducer from '../features/schedule/ScheduleForm';
+import getScheduleReducer from '../features/schedule/ScheduleSlice';
+import getSearchScheduleReducer from '../features/schedule/SearchSchedules';
 
 import libraryReducer from '../features/library/LibrarySlice';
 
@@ -40,8 +44,12 @@ export default configureStore({
       managerBooking: mannagerBookingReducer,
       managerSingleBooking: managerSingleBookingReducer,
       bookingById: getBookingByIdUserReducer,
+      booking: getBookingByIdReducer,
+      bookingUpdateQty: UpdateBookingQty,
       //Schedule
       scheduleForm: scheduleFormReducer,
+      schedules: getScheduleReducer,
+      searchSchedule: getSearchScheduleReducer,
       // Library 
       library: libraryReducer
     },

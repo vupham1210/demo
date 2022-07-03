@@ -15,6 +15,7 @@ export const addSchedule = async (req , res) => {
     try{
         scheduleBooking = new ScheduleBooking({
             idService: req.body.idService,
+            titleService: req.body.titleService,
             idAuthor: req.body.idAuthor,
             timePick: {
                 timeStart: req.body.timeStart,
@@ -66,7 +67,7 @@ export const getAllSchedule = async (req , res) => {
 
     try {
         if(author){
-            ScheduleList = await ScheduleBooking.find(params);
+            ScheduleList = await ScheduleBooking.find(params).sort({createdAt: -1});
             if(ScheduleList){
                 response = {
                     title: "Thành công",
@@ -76,6 +77,68 @@ export const getAllSchedule = async (req , res) => {
                     status: 200,
                 };
                 return res.status(200).json(ScheduleList);
+            }
+        } else {
+            response = {
+                title: "Lỗi xảy ra",
+                message: "Tài khoản không hợp lệ",
+                type: 'warning',
+                error: true,
+                status: 201,
+            };
+            res.status(201).json(response);
+        }
+        
+    } catch (error) {
+        console.log(error)
+    }
+    res.status(400).json(response);
+}
+
+export const searchSchedules = async (req , res) => {
+
+    const reqQuery = {...req.query};
+    const valueQuery = reqQuery.q;
+    
+    const ScheduleList = await ScheduleBooking.find(
+        { ortherInfo: { $elemMatch: {  value: valueQuery   } } } 
+    );
+    res.status(200).json({
+        success: true,
+        data: ScheduleList
+    });
+}
+
+export const changeStatusSchedule = async (req , res) => {
+    let response = {
+        title: "Lỗi xảy ra",
+        message: "Đã có lỗi xảy ra trong quá trình lấy dữ liệu",
+        type: 'warning',
+        error: true,
+        status: 201,
+    };
+
+    let ScheduleChange;
+    const author = req.userId ? req.userId.user_id : '';
+    
+    let params = {
+        idAuthor: author
+    }
+
+    try {
+        if(author){
+            ScheduleChange = await ScheduleBooking.findByIdAndUpdate(req.params.id,{
+                status: req.query.status,
+            });
+            if(ScheduleChange){
+                response = {
+                    title: "Thành công",
+                    message: "Đã xác nhận thành công",
+                    type: 'success',
+                    error: true,
+                    status: 200,
+                };
+                return res.status(200).json(response);
             }
         } else {
             response = {

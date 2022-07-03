@@ -376,7 +376,7 @@ const CreateBooking = () => {
     data.forEach((value, key) => (formDataObj[key] = value));
     console.log(formDataObj);
     setFormList([...FormList,formDataObj]);
-    setKeySlug('');
+    setKeySlug(''); 
     setOpenAddField(false);
   }
 

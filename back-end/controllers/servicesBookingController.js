@@ -142,6 +142,53 @@ export const getBookingByIDUser = async (req, res) => {
     res.status(400).json(response);
 }
 
+export const getBookingByID = async (req, res) => {
+    let response = {
+        title: "Lỗi xảy ra",
+        message: "Đã có lỗi xảy ra trong quá trình lấy dữ liệu",
+        type: 'warning',
+        error: true,
+        status: 201,
+    };
+
+    let BookingData;
+    const author = req.userId ? req.userId.user_id : '';
+    
+    let params = {
+        _id: req.params.id,
+        author: author
+    }
+
+    try {
+        if(author){
+            BookingData = await ServicesBooking.findOne(params);
+            if(BookingData){
+                response = {
+                    title: "Thành công",
+                    message: "lấy dữ liệu thành công",
+                    type: 'success',
+                    error: true,
+                    status: 200,
+                };
+                return res.status(200).json(BookingData);
+            }
+        } else {
+            response = {
+                title: "Lỗi xảy ra",
+                message: "Tài khoản không hợp lệ",
+                type: 'warning',
+                error: true,
+                status: 201,
+            };
+            res.status(201).json(response);
+        }
+        
+    } catch (error) {
+        console.log(error)
+    }
+    res.status(400).json(response);
+}
+
 export const addBooking = async (req, res) => {
 
     let response = {
@@ -216,6 +263,47 @@ export const addBooking = async (req, res) => {
 
 export const updateBooking = (req, res) => {
     res.status(200).json({ status: 'updateBooking'});
+}
+
+export const updateBookingQty = async (req, res) => {
+    let response = {
+        title: "Lỗi xảy ra",
+        message: "Đã có lỗi xảy ra trong quá trình",
+        type: 'warning',
+        error: true,
+        status: 201,
+    };
+
+    let bookingUpdateQty;
+
+    try {
+        const { timePick } = req.body ;
+        bookingUpdateQty = await ServicesBooking.findByIdAndUpdate({_id: req.params.id},{time: timePick});
+
+        if(bookingUpdateQty){
+            response = {
+                title: "Thành công",
+                message: "Booking Updated",
+                type: 'success',
+                error: false,
+                status: 200,
+                data: bookingUpdateQty,
+            };
+            return res.status(200).json(response);
+        }
+
+    } catch (error) {
+        console.log(error);
+        response = {
+            title: "Lỗi xảy ra",
+            message: "Đã có lỗi xảy ra",
+            type: 'warning',
+            error: true,
+            status: 400,
+        };
+        return res.status(400).json(response);
+    }
+    return res.status(201).json(response);
 }
 
 export const deleteBooking = async (req, res) => {

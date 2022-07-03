@@ -88,7 +88,6 @@ const SingleBooking = () => {
               }, {});
           }
           
-          
           if (!formRef.current.check()) {
             toaster.push(<Message showIcon type="error">Một hoặc nhiều trường bị thiếu thông tin</Message>);
             return;
@@ -97,6 +96,8 @@ const SingleBooking = () => {
           toaster.push(<Message showIcon type="success">Đang gửi dữ liệu</Message>);
     
           let json = serializeForm(data);
+          const arrOfObj1 = Object.values(json.ortherInfo);
+          json.ortherInfo = arrOfObj1;
           dispatch(createScheduleAsync(json));
           handleClose();
     }
@@ -131,13 +132,18 @@ const SingleBooking = () => {
                                                 <Form.Group className="mb-3">
                                                     <Form.ControlLabel>{val.name}</Form.ControlLabel>
                                                     <Form.Control
-                                                        name={`ortherInfo[${val.key}][value]`}
-                                                        value={EventTarget.value}
+                                                        type='hidden'
+                                                        name={`ortherInfo[${val.key}][key]`}
+                                                        value={val.key}
                                                     />
                                                     <Form.Control
                                                         type='hidden'
                                                         name={`ortherInfo[${val.key}][label]`}
                                                         value={val.name}
+                                                    />
+                                                    <Form.Control
+                                                        name={`ortherInfo[${val.key}][value]`}
+                                                        value={EventTarget.value}
                                                     />
                                                 </Form.Group>
                                             </Col>
@@ -148,6 +154,9 @@ const SingleBooking = () => {
                                 <Form.Control hidden 
                                 defaultValue={inforBooking.inforBooking._id}
                                 name = 'idService' />
+                                <Form.Control hidden 
+                                defaultValue={inforBooking.inforBooking.title}
+                                name = 'titleService' />
                                 <Form.Control hidden 
                                 defaultValue={inforBooking.inforBooking.author}
                                 name = 'idAuthor' />
@@ -187,12 +196,13 @@ const SingleBooking = () => {
                             <h3>{SingleData.title}</h3>
                             <p>
                                 <Clock width={20} height={20}  fill={'black'}/>
-                                {SingleData.startDate}
+                                { format(new Date(SingleData.startDate), 'dd/MM/yyyy') }
                             </p>
-                            <p>
+                            {SingleData.endDate ? <p>
                                 <Clock width={20} height={20}  fill={'black'}/>
                                 {SingleData.endDate}
-                            </p>
+                            </p> : ''}
+                            
                         </Card.Header>
                         <Card.Body>
                             <p>{SingleData.content}</p>
@@ -213,17 +223,21 @@ const SingleBooking = () => {
                                                     timeStart: val.timeStart,
                                                     timeEnd: val.timeEnd,
                                                 }
-                                            } 
-                                            return(
-                                                <ListGroup.Item className="border-0 p-0 py-4" key={index}>                                                  
-                                                    <Button variant='primary' 
-                                                    className='me-2' 
-                                                    onClick={() =>{handleOpenFrom(dataHandle)}} 
-                                                    appearance="subtle">
-                                                    Đăng kí khung giờ {val.timeStart} - {val.timeEnd}
-                                                    </Button>
-                                                </ListGroup.Item>
-                                            )
+                                            }
+                                            if(val?.qtyNow === 0){
+                                                return '';
+                                            }else{
+                                                return(
+                                                    <ListGroup.Item className="border-0 p-0 py-4" key={index}>                                                  
+                                                        <Button variant='primary' 
+                                                        className='me-2' 
+                                                        onClick={() =>{handleOpenFrom(dataHandle)}} 
+                                                        appearance="subtle">
+                                                        Đăng kí khung giờ {val.timeStart} - {val.timeEnd} Còn trống: {val?.qtyNow ? val.qtyNow : val.qty}
+                                                        </Button>
+                                                    </ListGroup.Item>
+                                                )
+                                            }
                                         })
                                     }
                                 </ListGroup>

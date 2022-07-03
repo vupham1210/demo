@@ -18,6 +18,7 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import Account from './pages/dashboard/Account';
 import Dashboard from './pages/Dashboard';
+import SearchSchedules from './pages/SearchSchedules' ;
 
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
           <Route path="/dang-ky/" element={ <Register/> } />
           <Route path="/dang-nhap/" element={ <Login/> } />
           <Route path="/tai-khoan/" element={ <Account/> } />
+          <Route path="/search/" element={ <SearchSchedules/> } />
           <Route path="/tai-khoan/:slug" element={ <Dashboard /> } />
           
           <Route path="/booking/" element={ <ArchiveBooking /> } />

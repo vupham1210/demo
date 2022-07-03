@@ -4,6 +4,8 @@ import FileUpload from './FileUpload';
 import ManagerBooking from './ManagerBooking';
 import ManagerUsers from './UserManager';
 import Account from './Account';
+import ManagetSchedule from './ScheduleManager';
+import SearchSchedule from './SchedulesHistory';
 
 const DasboardPanel = (props) => {
   switch (props.page){
@@ -18,6 +20,12 @@ const DasboardPanel = (props) => {
     break;
     case('quan-ly-lich-hen'): 
       return <ManagerBooking />;
+    break;
+    case('quan-ly-cuoc-hen'): 
+      return <ManagetSchedule />;
+    break;
+    case('trang-thai-cuoc-hen'): 
+      return <SearchSchedule />;
     break;
     case('thu-vien'): 
       return <FileUpload />;

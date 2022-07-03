@@ -1,5 +1,5 @@
 import React, { useEffect,useState } from 'react'
-import { House, People, Calendar2Plus, CalendarWeek, ArrowReturnRight, Images } from 'react-bootstrap-icons';
+import { House, People, Calendar2Plus, CalendarWeek, ArrowReturnRight, Images, CalendarEvent, CalendarCheck } from 'react-bootstrap-icons';
 import { Link } from 'react-router-dom';
 import { Sidenav, Nav, Dropdown, Toggle } from 'rsuite';
 import { getUserInforAsync, userInformation } from '../../features/user/userSlice';
@@ -51,14 +51,23 @@ const DasboardNav = () => {
                     Quản lý lịch hẹn
                     </Link>
                 </Nav.Item>
+                <Nav.Item as='li' className="ps-3" eventKey="4" icon={<CalendarEvent height={16} width={16} fill="black" className='me-2'/>}>
+                  <Link className='text-dark' to='/tai-khoan/quan-ly-cuoc-hen'>
+                    Quản lý cuộc hẹn
+                    </Link>
+                </Nav.Item>
                 </>
               : '' }
-              
+              <Nav.Item as='li' className="ps-3" eventKey="5" icon={<CalendarCheck height={16} width={16} fill="black" className='me-2'/>}>
+                <Link className='text-dark' to='/tai-khoan/trang-thai-cuoc-hen'>
+                  Trạng thái cuộc hẹn
+                </Link>
+              </Nav.Item>
               <Nav.Item as='li' className="ps-3" eventKey="5" icon={<Images height={16} width={16} fill="black" className='me-2'/>}>
                 <Link className='text-dark' to='/tai-khoan/thu-vien'>
                   Quản lý thư viện
                 </Link>
-                </Nav.Item>
+              </Nav.Item>
               <Nav.Item  as='li' className="ps-3" eventKey="6" icon={<ArrowReturnRight height={16} width={16} fill="black" className='me-2'/>}>
                 <Link className='text-dark' to='/tai-khoan/dang-xuat'>
                   Đăng xuất

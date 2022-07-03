@@ -6,7 +6,9 @@ import {
     updateBooking, 
     deleteBooking, 
     getBookingBySlug, 
-    getBookingByIDUser } from '../controllers/servicesBookingController.js';
+    getBookingByIDUser,
+    getBookingByID,
+    updateBookingQty } from '../controllers/servicesBookingController.js';
 import { verifyToken } from '../helper/jwt_services.js';  
 
 const BookingRouter = Router();
@@ -18,6 +20,7 @@ BookingRouter.patch('/update' , verifyToken, updateBooking);
 BookingRouter.patch('/delete' , verifyToken, deleteBooking);
 
 BookingRouter.get('/:iduser',getBookingByIDUser);
-
+BookingRouter.get('/booking/:id', verifyToken,getBookingByID);
+BookingRouter.post('/update-booking/:id', verifyToken, updateBookingQty);
 
 export default BookingRouter;

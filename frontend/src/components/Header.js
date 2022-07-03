@@ -43,14 +43,7 @@ const Header = () => {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Link className="nav-link" to={'/'}>Trang chủ</Link>
-            <Link className="nav-link" to={'/booking/'}>Booking</Link>
-            { !userInformationSelect ? 
-            <>
-            <Link className="nav-link" to={'/dang-ky'}>Đăng ký</Link>
-            <Link className="nav-link" to={'/dang-nhap'}>Đăng nhập</Link>
-            </>
-            : ''
-            }
+            <Link className="nav-link" to={'/search/'}>Tra cứu trạng thái lịch hẹn</Link>
             </Nav>
         </Navbar.Collapse>
         {
@@ -73,7 +66,11 @@ const Header = () => {
                 Tạo event
              </button>
             </> :
-            <Link to={'/dang-nhap'}><Button>Đăng nhập</Button></Link>
+            <>
+              <Link to={'/dang-nhap'}><Button>Đăng nhập</Button></Link>
+              <Link className="nav-link" to={'/dang-ky'}><Button className='btn-success'>Đăng ký</Button></Link>
+            </>
+            
         }
       </Container>
     </Navbar>
