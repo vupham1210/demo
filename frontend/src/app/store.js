@@ -9,6 +9,7 @@ import createUserReducer from '../features/user/createUser';
 import updateUserReducer from '../features/user/updateUser';
 import vendorsReducer from '../features/user/getVendor';
 import subcriberReducer from '../features/user/getSubcriber';
+import searchUserReducer from '../features/user/searchUser';
 
 import bookingFormReducer from '../features/booking/BookingForm';
 import mannagerBookingReducer from '../features/booking/ManagerBooking';
@@ -20,6 +21,9 @@ import UpdateBookingQty from '../features/booking/UpdateBookingQty';
 import scheduleFormReducer from '../features/schedule/ScheduleForm';
 import getScheduleReducer from '../features/schedule/ScheduleSlice';
 import getSearchScheduleReducer from '../features/schedule/SearchSchedules';
+
+import contactFormReducer from '../features/contact/addContact';
+import getContactReducer from '../features/contact/ContactSlice';
 
 import libraryReducer from '../features/library/LibrarySlice';
 
@@ -39,6 +43,7 @@ export default configureStore({
       refreshtoken: refreshtokenReducer,
       updateUser: updateUserReducer,
       createUser: createUserReducer,
+      searchUser: searchUserReducer,
       // Booking 
       bookingForm: bookingFormReducer,
       managerBooking: mannagerBookingReducer,
@@ -50,6 +55,9 @@ export default configureStore({
       scheduleForm: scheduleFormReducer,
       schedules: getScheduleReducer,
       searchSchedule: getSearchScheduleReducer,
+      //Contact
+      contactForm: contactFormReducer,
+      contacts: getContactReducer,
       // Library 
       library: libraryReducer
     },

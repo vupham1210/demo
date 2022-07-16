@@ -50,7 +50,7 @@ const Header = () => {
           userInformationSelect ?  
             <>
               <div className="greeting me-3">
-                <span>Xin chào { userInformationSelect.username } <CaretDownFill /> </span>
+                <span>Xin chào { userInformationSelect?.fullname ? userInformationSelect?.fullname : userInformationSelect.username } <CaretDownFill /> </span>
                 <div className='greetingMenu'>
                   <Link className='btn btn-success mb-2' to={'/tai-khoan/trang-ca-nhan'}>
                     <Person />

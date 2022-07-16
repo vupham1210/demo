@@ -1,4 +1,6 @@
 import { ScheduleBooking } from '../model/Schedule.js';
+import { User } from '../model/User.js';
+import { mailLetter } from '../helper/mailler.js';
 
 export const addSchedule = async (req , res) => {
     let response = {
@@ -23,16 +25,25 @@ export const addSchedule = async (req , res) => {
             },
             ortherInfo: req.body.ortherInfo,
         });
-        await scheduleBooking.save();
-        if(scheduleBooking){
-            response = {
-                title: "Thành công",
-                message: "Đã tạo đặt lịch thành công",
-                type: 'success',
-                error: false,
-                status: 200,
-            };
-            return res.status(200).json(response);
+        let authorbooking = await User.findOne({_id: req.body.idAuthor});
+        if(authorbooking){
+            await scheduleBooking.save();
+            if(scheduleBooking){
+                response = {
+                    title: "Thành công",
+                    message: "Đã tạo đặt lịch thành công",
+                    type: 'success',
+                    error: false,
+                    status: 200,
+                };
+                const informail = {
+                    receiver: `${authorbooking.email}`,
+                    subject: `Có người đặt lịch hẹn tại lịch ${req.body.titleService}`,
+                    html: 'demo send mail'
+                }
+                mailLetter(informail);
+                return res.status(200).json(response);
+            }
         }
     }catch(err){
         console.log(err);
@@ -138,6 +149,17 @@ export const changeStatusSchedule = async (req , res) => {
                     error: true,
                     status: 200,
                 };
+                let ttkh = ScheduleChange?.ortherInfo;
+                ttkh.map((val) => {
+                    if(val?.key === 'email'){
+                        const informail = {
+                            receiver: `${val?.value}`,
+                            subject: `Xác nhận lịch đặt hẹn`,
+                            html: `Lịch bạn đã được phê duyệt là ${req.query.status} vui lòng kiểm tra lại!!!`
+                        }
+                        mailLetter(informail);
+                    }
+                })
                 return res.status(200).json(response);
             }
         } else {

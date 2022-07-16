@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Form, Card, Button, Row, Col } from 'react-bootstrap'
+import { Card, Button, Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns'
 import { Image } from 'react-bootstrap-icons';
-import { Modal } from 'rsuite';
+import { Modal, toaster, Message, Form, Input, Schema, InputGroup, DatePicker  } from 'rsuite';
 import { 
   updateUserAsync, 
   userUpdateStatus,
@@ -20,10 +20,20 @@ const UpdateAccountForm = () => {
   const updateStatus = useSelector(userUpdateStatus);
   const avatarRedux = useSelector(userAvatar);
   const User = useSelector(userInformation);
+
+  useEffect(()=>{
+    dispatch(getUserInforAsync());
+  },[dispatch])
   
+  const model = Schema.Model({
+    fullname : Schema.Types.StringType().isRequired('Bạn cần đặt tiêu đề.'),
+    email: Schema.Types.StringType().isRequired('Bạn cần nhập nội dung.'),
+  });
+
+  const formRef = new useRef();
+  const [formError, setFormError] = useState({});
   const [formData, setFormData] = useState({
-    first_name: '',
-    last_name: '',
+    fullname: '',
     birth_day: '',
     personal_id: '',
     email: '',
@@ -31,96 +41,31 @@ const UpdateAccountForm = () => {
     avatar: '',
   });
 
-  useEffect(()=>{
-    dispatch(getUserInforAsync());
-  },[dispatch])
-  
-  const inputFirstName = useRef(null);
-  const inputLastName = useRef(null);
-  const inputPersonalID = useRef(null);
-  const inputBirthDay = useRef(null);
-  const inputEmail = useRef(null);
-  const inputPhone = useRef(null);
-  const inputAddress = useRef(null);
-
-  // Validate 
-  const [isValidInputFirstName, setIsValidInputFirstName] = useState(true);
-  const [isValidInputLastName, setIsValidInputLastName] = useState(true);
-  const [isValidInputPersonalID, setIsValidInputPersonalID] = useState(true);
-  const [isValidInputBirthDay, setIsValidInputBirthDay] = useState(true);
-  const [isValidInputEmail, setIsValidInputEmail] = useState(true);
-  const [isValidInputPhone, setIsValidInputPhone] = useState(true);
-  const [isValidInputAddress, setIsValidInputAddress] = useState(true);
-
-  const updateFormData = () => {
-
-    if(inputFirstName.current.value === ''){
-      inputFirstName.current.focus();
-      setIsValidInputFirstName(false);
-    } else {
-      setIsValidInputFirstName(true);
+  const SubmitForm = (e) => {
+    if (!formRef.current.check()) {
+      toaster.push(<Message showIcon type="error">Một hoặc nhiều trường bị thiếu thông tin</Message>);
+      return;
     }
-    // 
-    if(inputLastName.current.value === ''){
-      inputLastName.current.focus();
-      setIsValidInputLastName(false);
-    } else {
-      setIsValidInputLastName(true);
+    const data = new FormData(formRef.current.root);
+    var object = {};
+        data.forEach(function(value, key){
+          if(key === 'birth_day'){
+            const [day, month , year] = value.split('/');
+            object[key] = new Date(+year, +month - 1, +day, +0, +0, +0);
+          }else{
+            object[key] = value;
+          }   
+    });
+    object['avatar'] = '';
+    if(User?.avatar){
+      object['avatar'] = User?.avatar;
     }
-    //
-    if(inputPersonalID.current.value === ''){
-      inputPersonalID.current.focus();
-      setIsValidInputPersonalID(false);
-    } else {
-      setIsValidInputPersonalID(true);
+    if(avatarRedux){
+      object['avatar'] = avatarRedux.path;
     }
-    if(inputBirthDay.current.value === ''){
-      inputBirthDay.current.focus();
-      setIsValidInputBirthDay(false);
-    } else {
-      setIsValidInputBirthDay(true);
-    }
-    if(inputEmail.current.value === ''){
-      inputEmail.current.focus();
-      setIsValidInputEmail(false);
-    } else {
-      setIsValidInputEmail(true);
-    }
-
-    if(inputPhone.current.value === ''){
-      inputPhone.current.focus();
-      setIsValidInputPhone(false);
-    } else {
-      setIsValidInputPhone(true);
-    } 
-    
-    if(inputAddress.current.value === ''){
-      inputAddress.current.focus();
-      setIsValidInputAddress(false);
-    } else {
-      setIsValidInputAddress(true);
-    }
-
-    let Form =  {
-      first_name: inputFirstName.current.value,
-      last_name: inputLastName.current.value,
-      birth_day: inputBirthDay.current.value,
-      personal_id: inputPersonalID.current.value,
-      address: inputAddress.current.value, 
-      email: inputEmail.current.value,
-      avatar: avatarRedux ? avatarRedux.path : '',
-      username: User.user_name ? User.user_name : '',
-      token: User.token ? User.token : ''
-    }
-
-    setFormData(Form);
-    
-    let isAllValidate = true;
-
-    if(isAllValidate){
-      dispatch(updateUserAsync(formData));
-    }
-
+    var json = JSON.stringify(object);
+    console.log(json);
+    dispatch(updateUserAsync(json));
   } 
   
   // Modal 
@@ -142,130 +87,119 @@ const UpdateAccountForm = () => {
     setOpen(false);
   }
 
+  const ImgShow = () => {
+    if(avatarRedux){
+      return (<img width={200} height={200} src={avatarRedux?.path}/>)
+    }
+    if(User?.avatar){
+      return (<img width={200} height={200} src={User?.avatar}/>)
+    }
+    return (
+      <>
+        <Image height={60} width={60} />
+        <Form>
+          Ảnh đại diện
+        </Form>
+      </>
+    )
+  }
+  
+
   return (
     <>
-    <Form onSubmit={ (e) => {
-      e.preventDefault(); 
-      updateFormData()
-      }} 
-      encType="multipart/form-data"
-      >
-      <Card className="mb-3">
-        <Card.Body>
-          <Row>
-              <Col xs={12}>
-                    <Form.Group className='mb-3'>
-                      <div className='uploadThumbnail'>
-                        <div onClick={() => { handleOpenSingle() }}>
-                          { (User?.avatar || avatarRedux) ? 
-                          <img width={200} height={200} src={User?.avatar}/>
-                          : 
-                          <div>
-                          <Image height={60} width={60} />
-                            <Form.Label>
-                              Ảnh đại diện
-                            </Form.Label>
-                          </div>
-                          } 
-                          </div>
-                        </div>
-                    </Form.Group>
-              </Col>
-          </Row>
-        </Card.Body>
-      </Card>
-      <Card>
-        <Card.Header>Thông tin tài khoản</Card.Header>
-        <Card.Body>
-            <Row>
-              <Col xs={6}>
+    {
+            User ? 
+            <>
+            <Card className="mb-3">
+              <Card.Body>
+                <Row>
+                    <Col xs={12}>
+                          <Form.Group className='mb-3'>
+                            <div className='uploadThumbnail'>
+                              <div onClick={() => { handleOpenSingle() }}>
+                                <ImgShow/>
+                                </div>
+                              </div>
+                          </Form.Group>
+                    </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+            <Form 
+                fluid
+                autoComplete="off"
+                ref={formRef}
+                onChange={setFormData}
+                onSubmit={(e) => { SubmitForm(e) }}
+            >
+              <Row>
+                <Col md={6} sm={12}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Họ</Form.Label>
-                    <Form.Control 
-                    defaultValue={User ? User.firstname : ''}
-                    className={!isValidInputFirstName && 'formHelp'} 
-                    ref={inputFirstName} 
-                    placeholder='Nhập họ của bạn'/>
-                    {!isValidInputFirstName && <span className="inlineHelp"> Thông tin này không được để trống! </span>}
+                      <Form.ControlLabel>Nhập Họ và tên</Form.ControlLabel>
+                      <Form.Control
+                        name={'fullname'}
+                        defaultValue={User?.fullname}
+                        value={EventTarget.value}
+                    />
                   </Form.Group>
-              </Col>
-              <Col xs={6}>
+                </Col>
+                <Col md={6} sm={12}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Tên</Form.Label>
-                    <Form.Control 
-                    defaultValue={User ? User.lastname : ''}
-                    className={!isValidInputLastName && 'formHelp'} 
-                    ref={inputLastName} 
-                    placeholder='Nhập tên của bạn'/>
-                    {!isValidInputLastName && <span className="inlineHelp"> Thông tin này không được để trống! </span>}
+                      <Form.ControlLabel>Số điện thoại</Form.ControlLabel>
+                      <Form.Control
+                        name={'phone'}
+                        defaultValue={User?.phone}
+                        value={EventTarget.value}
+                    />
                   </Form.Group>
-              </Col>
-              <Col xs={6}>
+                </Col>
+                <Col md={6} sm={12}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Số CMND</Form.Label>
-                    <Form.Control 
-                    defaultValue={User ? User.personal_id : ''}
-                    className={!isValidInputPersonalID && 'formHelp'} 
-                    ref={inputPersonalID} 
-                    placeholder='Nhập chứng minh nhân dân'/>
-                    {!isValidInputPersonalID && <span className="inlineHelp"> Thông tin này không được để trống! </span>}
+                      <Form.ControlLabel>Nhập số CCCD</Form.ControlLabel>
+                      <Form.Control
+                        name={'personal_id'}
+                        defaultValue={User?.personal_id}
+                        value={EventTarget.value}
+                    />
                   </Form.Group>
-              </Col>
-              <Col xs={6}>
+                </Col>
+                <Col md={6} sm={12}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Ngày sinh</Form.Label>
-                    <Form.Control 
-                    defaultValue={User?.birth_day ? format(new Date(User?.birth_day), 'yyyy-MM-dd') : ''}
-                    className={!isValidInputBirthDay && 'formHelp'} 
-                    ref={inputBirthDay} 
-                    type="date" 
-                    placeholder='Nhập ngày sinh'/>
-                    {!isValidInputBirthDay && <span className="inlineHelp"> Thông tin này không được để trống! </span>}
+                      <Form.ControlLabel>Nhập Ngày/Tháng/Năm sinh</Form.ControlLabel>
+                      <Form.Control
+                        name={'birth_day'}
+                        defaultValue={User?.birth_day ? format(new Date(User?.birth_day), 'dd/MM/yyyy') : ''}
+                        value={EventTarget.value}
+                        placeholder={'dd/MM/yyyy'}
+                    />
                   </Form.Group>
-              </Col>
-              <Col xs={6}>
+                </Col>
+                <Col md={6} sm={12}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Địa chỉ Email</Form.Label>
-                    <Form.Control 
-                    defaultValue={User ? User.email : ''}
-                    className={!isValidInputEmail && 'formHelp'} 
-                    ref={inputEmail} 
-                    type="email" 
-                    placeholder='Nhập địa chỉ Email'/>
-                    {!isValidInputEmail && <span className="inlineHelp"> Thông tin này không được để trống! </span>}
+                      <Form.ControlLabel>Nhập Email</Form.ControlLabel>
+                      <Form.Control
+                        name={'email'}
+                        defaultValue={User?.email}
+                        value={EventTarget.value}
+                    />
                   </Form.Group>
-              </Col>
-              <Col xs={6}>
+                </Col>
+                <Col md={6} sm={12}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Số điện thoại</Form.Label>
-                    <Form.Control 
-                    defaultValue={User ? User.phone : ''}
-                    className={!isValidInputPhone && 'formHelp'} 
-                    ref={inputPhone} 
-                    placeholder='Nhập số điện thoại'/>
-                    {!isValidInputPhone && <span className="inlineHelp"> Thông tin này không được để trống! </span>}
+                      <Form.ControlLabel>Nhập Địa chỉ</Form.ControlLabel>
+                      <Form.Control
+                        name={'address'}
+                        defaultValue={User?.address}
+                        value={EventTarget.value}
+                    />
                   </Form.Group>
-              </Col>
-              <Col xs={12}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Địa chỉ chi tiết</Form.Label>
-                    <Form.Control 
-                    defaultValue={User ? User.address : ''}
-                    className={!isValidInputAddress && 'formHelp'} 
-                    ref={inputAddress} 
-                    placeholder='Nhập địa chỉ của bạn'/>
-                    {!isValidInputAddress && <span className="inlineHelp"> Thông tin này không được để trống! </span>}
-                  </Form.Group>
-              </Col>
-              <Col xs={12}>
-                  <Form.Group className="mb-3">
-                    <Button type="submit">Cập nhật thông tin</Button>
-                  </Form.Group>
-              </Col>
-            </Row>
-        </Card.Body>
-      </Card>
-    </Form>
+                </Col>
+              </Row>
+                <Button variant='success' type='submit' className='me-2'>Cập nhật thông tin</Button>
+            </Form>
+            </>
+            : ''
+        }  
     <Modal size={'md'} open={open} onClose={handleClose}>
         <Modal.Header>
           <Modal.Title>Modal Title</Modal.Title>

@@ -1,5 +1,5 @@
 import React, { useEffect,useState } from 'react'
-import { House, People, Calendar2Plus, CalendarWeek, ArrowReturnRight, Images, CalendarEvent, CalendarCheck } from 'react-bootstrap-icons';
+import { House, People, Calendar2Plus, CalendarWeek, ArrowReturnRight, Images, CalendarEvent, CalendarCheck,PersonLinesFill } from 'react-bootstrap-icons';
 import { Link } from 'react-router-dom';
 import { Sidenav, Nav, Dropdown, Toggle } from 'rsuite';
 import { getUserInforAsync, userInformation } from '../../features/user/userSlice';
@@ -61,6 +61,16 @@ const DasboardNav = () => {
               <Nav.Item as='li' className="ps-3" eventKey="5" icon={<CalendarCheck height={16} width={16} fill="black" className='me-2'/>}>
                 <Link className='text-dark' to='/tai-khoan/trang-thai-cuoc-hen'>
                   Trạng thái cuộc hẹn
+                </Link>
+              </Nav.Item>
+              <Nav.Item as='li' className="ps-3" eventKey="5" icon={<PersonLinesFill height={16} width={16} fill="black" className='me-2'/>}>
+                <Link className='text-dark' to='/tai-khoan/gui-yeu-cau'>
+                  Gửi yêu cầu
+                </Link>
+              </Nav.Item>
+              <Nav.Item as='li' className="ps-3" eventKey="5" icon={<PersonLinesFill height={16} width={16} fill="black" className='me-2'/>}>
+                <Link className='text-dark' to='/tai-khoan/quan-li-yeu-cau'>
+                  Quản lí yêu cầu
                 </Link>
               </Nav.Item>
               <Nav.Item as='li' className="ps-3" eventKey="5" icon={<Images height={16} width={16} fill="black" className='me-2'/>}>

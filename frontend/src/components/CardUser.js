@@ -18,7 +18,7 @@ const CardUser = ({data}) => {
                     </div>
                     <div className="tab-pd">
                         <div className="content">
-                            <div className="cap short">{data.firstname} {data.lastname}</div>
+                            <div className="cap short">{data?.fullname}</div>
                             <div className="bar with-mh">
                                     <div className="address d-flex"> 
                                     <GeoAlt width={25} height={25} className='me-2'/>

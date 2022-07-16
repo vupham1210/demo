@@ -42,6 +42,19 @@ export const uploadSingle = async (req, res, next) => {
   if( author.user_id == '' ){
     res.status(203).json(response)
     return;
+  }else{
+    const allImages = await Images.find({author: req.userId.user_id});
+    let sllImage =  Object.keys(allImages).length;
+    if(sllImage > 3){
+      response = {
+        title: "Lỗi xảy ra",
+        message: "Bạn không thể tiếp tục thêm ảnh",
+        type: 'error',
+        error: true,
+        author: author.user_id ? author.user_id : 'không xác định',
+      }
+      return res.status(200).json(response)
+    }
   }
 
   const file = req.file;
@@ -97,7 +110,7 @@ export const uploadSingle = async (req, res, next) => {
 }
 
 export const library = async (req, res) => {
-  const allImages = await Images.find();
+  const allImages = await Images.find({author: req.userId.user_id});
   let response = [];
   if(allImages){
     allImages.map((val, index) => {

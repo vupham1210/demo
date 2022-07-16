@@ -6,6 +6,8 @@ import ManagerUsers from './UserManager';
 import Account from './Account';
 import ManagetSchedule from './ScheduleManager';
 import SearchSchedule from './SchedulesHistory';
+import RequestVendor from './RequestVendor';
+import RequestManager from './RequestManager';
 
 const DasboardPanel = (props) => {
   switch (props.page){
@@ -26,6 +28,12 @@ const DasboardPanel = (props) => {
     break;
     case('trang-thai-cuoc-hen'): 
       return <SearchSchedule />;
+    break;
+    case('gui-yeu-cau'): 
+      return <RequestVendor />;
+    break;
+    case('quan-li-yeu-cau'): 
+      return <RequestManager />;
     break;
     case('thu-vien'): 
       return <FileUpload />;

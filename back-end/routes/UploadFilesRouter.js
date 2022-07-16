@@ -13,7 +13,7 @@ UploadRouter.post("/", [verifyToken,  upload.single('uploaded_file')], uploadSin
 
 UploadRouter.get('/images/:name', getFile);
 
-UploadRouter.get("/images/", library);
+UploadRouter.get("/images/", verifyToken, library);
 
 UploadRouter.post("/delete/", verifyToken , removeImage);
 

@@ -133,6 +133,31 @@ const ScheduleManager = () =>  {
         return;
     }
 
+    const handleChangeStatus = (rowData, status) => {
+        setDataBooking(rowData.idService);
+        changeQuantityService(rowData,status);
+    }
+
+    const handleLink = (rowData) => {
+        if(rowData.status === 'pending'){
+            return (
+                <>
+                <a className='btn btn-warning me-2' onClick={() => {handleChangeStatus(rowData,'fail')}}> Không chấp nhận </a>
+                <a className='btn btn-success' onClick={() => {handleChangeStatus(rowData,'success')}}> Chấp nhận </a>
+                </>
+            )
+        }
+        if(rowData.status === 'success'){
+            return (
+                <a className='btn btn-warning' onClick={() => {handleChangeStatus(rowData,'fail')}}> Không chấp nhận </a>
+            )
+        }else{
+            return (
+                <a className='btn btn-success' onClick={() => {handleChangeStatus(rowData,'success')}}> Chấp nhận </a>
+            )
+        }
+    }
+
     const ScheduleView = ({data}) => {
         const schedulehandle = data;
         setDataBooking(schedulehandle.idService);
@@ -166,6 +191,12 @@ const ScheduleManager = () =>  {
                     </Container>
                 }
             </Modal.Body>
+            <Modal.Footer>
+                <Button variant='danger' className='me-2' onClick={handleClose} appearance="subtle">
+                  Đóng
+                </Button>
+                {handleLink(schedulehandle)}
+              </Modal.Footer>
             </>
         )
     }
@@ -198,41 +229,20 @@ const ScheduleManager = () =>  {
                 <Table.Cell dataKey="status" />
             </Table.Column>
 
-            <Table.Column width={350} align="center" fixed="right">
+            <Table.Column width={150} align="center" fixed="right">
                 <Table.HeaderCell>Action</Table.HeaderCell>
 
                 <Table.Cell>
                 {rowData => {
-                    const handleChangeStatus = (rowData, status) => {
-                        setDataBooking(rowData.idService);
-                        changeQuantityService(rowData,status);
-                    }
+                    
                     const handleModalRow = (rowData) => {
                         openModalView(rowData);
                     }
-                    const handleLink = (rowData) => {
-                        if(rowData.status === 'pending'){
-                            return (
-                                <>
-                                <a className='text-success' onClick={() => {handleChangeStatus(rowData,'success')}}> Chấp nhận </a> | 
-                                <a className='text-danger' onClick={() => {handleChangeStatus(rowData,'fail')}}> Không chấp nhận </a>
-                                </>
-                            )
-                        }
-                        if(rowData.status === 'success'){
-                            return (
-                                <a className='text-danger' onClick={() => {handleChangeStatus(rowData,'fail')}}> Không chấp nhận </a>
-                            )
-                        }else{
-                            return (
-                                <a className='text-success' onClick={() => {handleChangeStatus(rowData,'success')}}> Chấp nhận </a>
-                            )
-                        }
-                    }
+                    
                     return (
                     <span>
-                        <a className='text-primary' onClick={() => {handleModalRow(rowData)}}>Xem chi tiết</a> |
-                        {handleLink(rowData)}
+                        <a className='text-primary' onClick={() => {handleModalRow(rowData)}}>Xem chi tiết</a>
+                        
                     </span>
                     );
                 }}
@@ -241,11 +251,7 @@ const ScheduleManager = () =>  {
             </Table>
             <Modal size={'md'} open={open} onClose={handleClose} aria-labelledby="contained-modal-title-vcenter" centered="true">
               <ScheduleView data={(scheduleData)}/>
-              <Modal.Footer>
-                <Button variant='danger' className='me-2' onClick={handleClose} appearance="subtle">
-                  Đóng
-                </Button>
-              </Modal.Footer>
+              
           </Modal>
         </>
     );

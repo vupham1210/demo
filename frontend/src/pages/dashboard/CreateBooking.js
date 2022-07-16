@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import {  Row, Col, Card } from 'react-bootstrap';
 import { Image, Calendar, PeopleFill, ListCheck, PlusLg, Pencil, Eraser, ThreeDotsVertical } from 'react-bootstrap-icons';
-import { DateRangePicker, DatePicker, Toggle, Checkbox, Nav, Tag, TagGroup, Button, SelectPicker } from 'rsuite';
+import { DateRangePicker, DatePicker, Toggle, Checkbox, Nav, Tag, TagGroup, Button } from 'rsuite';
 import { toaster, Message, Form, Input, InputNumber, Schema, Modal, CheckboxGroup, List, Panel  } from 'rsuite';
 import { useDispatch, useSelector } from 'react-redux';
 import slugify from 'react-slugify';
@@ -489,63 +489,88 @@ const CreateBooking = () => {
                           </Form.Group>
                         </Col>
                         <Col xs={12}>
-                        <Form.Group className='mb-3'>
-                            <Form.ControlLabel>
-                              Nội dung
-                            </Form.ControlLabel>
-                            <Input onChange={(e) => { dispatch(setContent(e)) }} value={formData.content} rows={5} name="content" as="textarea" />
-                          </Form.Group>
-                        </Col>
-                        <Col xs={12}>
                           <Form.Group className='mb-3'>
                             <Form.ControlLabel>
                               Địa điểm
                             </Form.ControlLabel>
                             <Form.Control onChange={(e) => { dispatch(setLocation(e)); }} value={formData.location} name="location" placeholder='Nhập địa điểm'/>
                           </Form.Group>
-                        </Col>
+                        </Col> 
                         <Col xs={12}>
-                          <Form.Group className='mb-3'>
-                            <Row>
-                              <Col className='col-auto'>
-                                <Form.Group className="mb-3">
-                                  <Form.ControlLabel>Chọn khoảng thời gian </Form.ControlLabel>
-                                  <Toggle onChange={() => { dispatch(setDatePicker()) }} size="sm" name="dateRanger"/>
-                                </Form.Group>
-                              </Col>
-                              <Col>
-                              <Form.ControlLabel>Chọn ngày: </Form.ControlLabel>
-                                  {
-                                    !formData.rangerDatePicker ? 
-                                    <DatePicker
-                                      format="dd/MM/yyyy" 
-                                      className='w-100' 
-                                      disabledDate={beforeToday()}
-                                      errorMessage={'Ngày nhập vào không chính xác'}
-                                      onChange={(e) => { addDate(e, false) }}
-                                      defaultValue={ formData.startDate ? formData.startDate : new Date()}
-                                    /> 
-                                    : 
-                                    <DateRangePicker 
-                                      format="dd/MM/yyyy" 
-                                      className='w-100'
-                                      disabledDate={beforeToday()}
-                                      errorMessage={'Ngày nhập vào không chính xác'}
-                                      onChange={(e) => { addDate(e, true) }}
-                                      defaultValue={ formData.startDate ? [formData.startDate, formData.endDate] : [new Date(), new Date()]}
-                                    />
-                                  }
-                                </Col>
-                            </Row>
+                        <Form.Group className='mb-3'>
+                            <Form.ControlLabel>
+                              Nội dung
+                            </Form.ControlLabel>
+                            <Input onChange={(e) => { dispatch(setContent(e)) }} value={formData.content} rows={5} name="content" as="textarea" />
+                          </Form.Group>
+                        </Col>  
+                  </Row>
+                </Col>
+                <Col xs={12} sm={12} md={4}>
+                    <Row>
+                      <Col xs={12}>
+                          <Form.Group className='mb-3' onClick={handleOpenSingle}>
+                            <div className='uploadThumbnail'>
+                              {
+                                formData.thumbnail.path ? 
+                                <div className='uploadThumbnailImage'>
+                                  <img className="imageThumbnail" src={formData.thumbnail.path} />
+                                </div>
+                                : 
+                                <div>
+                                  <Image height={60} width={60} />
+                                  <Form.ControlLabel>
+                                    Ảnh đại diện
+                                  </Form.ControlLabel>
+                                </div>
+                              }
+                              </div>
                           </Form.Group>
                         </Col>
-                        <Col xs={12}>
-                          <div className='card p-3 mb-2'>
+                    </Row>
+                </Col>
+                <Col xs={12} sm={12} md={6}> {/* Thêm Thời gian */}
+                  <Form.Group className='mb-3'>
+                    <Row>
+                      <Col className='col-auto'>
+                        <Form.Group className="mb-3">
+                          <Form.ControlLabel>Chọn khoảng thời gian </Form.ControlLabel>
+                          <Toggle onChange={() => { dispatch(setDatePicker()) }} size="sm" name="dateRanger"/>
+                        </Form.Group>
+                      </Col>
+                      <Col>
+                      <Form.ControlLabel>Chọn ngày: </Form.ControlLabel>
+                          {
+                            !formData.rangerDatePicker ? 
+                            <DatePicker
+                              format="dd/MM/yyyy" 
+                              className='w-100' 
+                              disabledDate={beforeToday()}
+                              errorMessage={'Ngày nhập vào không chính xác'}
+                              onChange={(e) => { addDate(e, false) }}
+                              defaultValue={ formData.startDate ? formData.startDate : new Date()}
+                            /> 
+                            : 
+                            <DateRangePicker 
+                              format="dd/MM/yyyy" 
+                              className='w-100'
+                              disabledDate={beforeToday()}
+                              errorMessage={'Ngày nhập vào không chính xác'}
+                              onChange={(e) => { addDate(e, true) }}
+                              defaultValue={ formData.startDate ? [formData.startDate, formData.endDate] : [new Date(), new Date()]}
+                            />
+                          }
+                        </Col>
+                        <Col>
+                        <div className='card p-3 mb-2 mt-3'>
                             <AddTimer />
                           </div>
                         </Col>
-                        <Col xs={12}>
-                        <div className='card p-3'>
+                    </Row>
+                  </Form.Group>
+                </Col>
+                <Col xs={12} sm={12} md={6}>
+                  <div className='card p-3'>
                           <h4 className='mb-3'>Các trường yêu cầu</h4>
                             <List bordered sortable onSort={handleSortEnd}>
                                 {FormList.map((val, index) => (
@@ -593,52 +618,9 @@ const CreateBooking = () => {
                             </Form>
                         </Modal.Body>
                     </Modal>
-                        </Col>
-                        
-                  </Row>
                 </Col>
-                <Col xs={12} sm={12} md={4}>
-                    <Row>
-                      <Col xs={12}>
-                          <Form.Group className='mb-3' onClick={handleOpenSingle}>
-                            <div className='uploadThumbnail'>
-                              {
-                                formData.thumbnail.path ? 
-                                <div className='uploadThumbnailImage'>
-                                  <img className="imageThumbnail" src={formData.thumbnail.path} />
-                                </div>
-                                : 
-                                <div>
-                                  <Image height={60} width={60} />
-                                  <Form.ControlLabel>
-                                    Ảnh đại diện
-                                  </Form.ControlLabel>
-                                </div>
-                              }
-                              </div>
-                          </Form.Group>
-                        </Col>
-                        <Col xs={12}>
-                        <Form.Group className='mb-3' onClick={handleOpenMultipe}>
-                            <Form.ControlLabel>
-                              Gallery
-                            </Form.ControlLabel>
-                            <div className='py-2'>
-                              <div style={stylesDragger} className='uploadGallery py-3'>
-                                {
-                                  formData.gallery.length > 0 ? 
-                                  <GalleryImages images={formData.gallery} />
-                                  : <p>Chọn để thêm gallery</p>
-                                }
-                              </div>
-                            </div>
-                            
-                          </Form.Group>
-                        </Col>
-                        <Col xs={12}>
-                          <Button type='submit'>Đăng thông tin</Button>
-                        </Col>
-                    </Row>
+                <Col xs={12}>
+                          <Button type='submit' color="cyan" className="my-3">Đăng thông tin</Button>
                 </Col>
               </Row>
               <Modal size={'md'} open={open} onClose={handleClose}>

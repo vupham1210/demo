@@ -52,9 +52,9 @@ const IndexLibrary = (props) => {
 
   
      return props ?
-     <div class="indexLibrary">
+     <div className="indexLibrary">
         
-        <div class="row m-0">
+        <div className="row m-0">
             {
                 props.images ? 
                 props.images.map((val) => {

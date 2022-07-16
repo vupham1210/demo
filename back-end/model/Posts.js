@@ -28,14 +28,6 @@ const ServicesSchema = new Schema({
     type: Object,
     required: false
   },
-  gallery: {
-    type: Array,
-    required: false
-  },
-  postIn: {
-    type: Date,
-    required: true,
-  },
   status: {
     type: String,
     required: true,

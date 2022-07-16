@@ -15,7 +15,7 @@ const initialState = {
 export const updateUserAsync = createAsyncThunk(
   'updateUser',
   async (formData) => {
-    const response = await AxiosInstance.post(userUpdateAction, formData).then((res) => {
+    const response = await AxiosInstance.patch(userUpdateAction, formData).then((res) => {
       return res.data;
     }).catch(function (error) {
       console.log(error);

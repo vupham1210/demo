@@ -7,6 +7,7 @@ import UserRouter from "../routes/userRoutes.js";
 import ServicesBookingRouter from "../routes/ServicesBookingRouter.js";
 import UploadRouter from "../routes/UploadFilesRouter.js";
 import ScheduleBookingRouter from "../routes/ScheduleBookingRouter.js";
+import ContactRouter from "../routes/ContactRouter.js";
 import bodyParser from "body-parser";
 import { __dirname } from "../path.js";
 import vhost from "vhost";
@@ -25,6 +26,7 @@ app.use("/users", UserRouter);
 app.use("/booking", ServicesBookingRouter);
 app.use("/upload", UploadRouter);
 app.use("/schedule",ScheduleBookingRouter)
+app.use("/contact",ContactRouter)
 
 const name = {
   'demo1' : 'demdodjfkfk',

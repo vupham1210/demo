@@ -20,6 +20,7 @@
     "express": "^4.18.1",
     "express-session": "^1.17.2",
     "express-subdomain": "^1.0.5",
+    "google-auth-library": "^8.1.1",
     "http": "^0.0.1-security",
     "jsonwebtoken": "^8.5.1",
     "md5": "^2.3.0",

@@ -3,13 +3,23 @@ import { Form, Button } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { loginUserAsync } from '../features/user/loginUser';
 import { useNavigate  } from 'react-router-dom';
-
+import { GoogleLogin } from 'react-google-login';
+import axios from 'axios';
+import { gapi } from "gapi-script";
 
 const Login = () => {
   
   let navigate = useNavigate();
 
   const dispatch = useDispatch();
+
+  gapi.load("client:auth2", () => {
+    gapi.client.init({
+      clientId:
+        "188089813721-pcllqotud9met1brkp3rpllva92f52vd.apps.googleusercontent.com",
+      plugin_name: "chat",
+    });
+  });
 
   const inputUserName = useRef(null);
   const inputPassword = useRef(null);
@@ -44,8 +54,6 @@ const Login = () => {
     setLoginForm(Form);
   };
 
-
-
   useEffect(() =>{
     let isAllValidate = true;
     for (const iterator in loginForm) {
@@ -60,6 +68,29 @@ const Login = () => {
       return navigate('/tai-khoan/trang-ca-nhan')
     }
   }, [loginForm])
+
+  const responseGoogleSuccess = async (response) => {
+    try {
+      const result = await  axios({
+        method: 'POST',
+        url: `${process.env.REACT_APP_SERVER_URL}/users/googlelogin`,
+        data: { idToken: response.tokenId }
+      });
+      console.log(result);
+      if(result.status === 200){
+        localStorage.setItem('token', result?.data.token);
+        localStorage.setItem('refreshToken', result?.data.refreshToken);
+        localStorage.setItem('expiredAt', result?.data.expiredAt);
+        return navigate('/tai-khoan/trang-ca-nhan')
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  const responseGoogleError = (response) => { 
+    console.log(response)
+  }
 
   return (
     <>
@@ -79,6 +110,14 @@ const Login = () => {
           <Button onClick={onButtonClick}>Đăng nhập</Button>
         </Form.Group>
       </Form>
+      <GoogleLogin
+        clientId="188089813721-pcllqotud9met1brkp3rpllva92f52vd.apps.googleusercontent.com"
+        buttonText="Login with Google"
+        onSuccess={responseGoogleSuccess}
+        onFailure={responseGoogleError}
+        cookiePolicy={'single_host_origin'}
+        prompt="select_account"
+      />
     </>
     
   )

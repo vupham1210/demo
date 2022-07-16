@@ -35,13 +35,13 @@ const SchedulesHistory = () => {
     const [dataS, setDataS] = useState();
     const SubmitForm = (data) => {
         dispatch(searchScheduleAsync(data))
-        if(dataSearch.data.length !== 0){
+        if(dataSearch?.data.length !== 0){
             setDataS(dataSearch);
         }
     }
 
     const getData = () => {
-        if(dataSearch.data.length === 0){
+        if(dataSearch?.data.length === 0){
             return dataS?.data;
         }else{
             return dataSearch?.data;
