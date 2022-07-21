@@ -20,7 +20,7 @@ const DasboardNav = () => {
     <>
       <Sidenav
         expanded={expanded}
-            defaultOpenKeys={['3', '4']}
+            defaultOpenKeys={['1']}
             activeKey={activeKey}
             onSelect={setActiveKey}>
           <Sidenav.Body>
@@ -51,34 +51,34 @@ const DasboardNav = () => {
                     Quản lý lịch hẹn
                     </Link>
                 </Nav.Item>
-                <Nav.Item as='li' className="ps-3" eventKey="4" icon={<CalendarEvent height={16} width={16} fill="black" className='me-2'/>}>
+                <Nav.Item as='li' className="ps-3" eventKey="5" icon={<CalendarEvent height={16} width={16} fill="black" className='me-2'/>}>
                   <Link className='text-dark' to='/tai-khoan/quan-ly-cuoc-hen'>
                     Quản lý cuộc hẹn
                     </Link>
                 </Nav.Item>
                 </>
               : '' }
-              <Nav.Item as='li' className="ps-3" eventKey="5" icon={<CalendarCheck height={16} width={16} fill="black" className='me-2'/>}>
+              <Nav.Item as='li' className="ps-3" eventKey="6" icon={<CalendarCheck height={16} width={16} fill="black" className='me-2'/>}>
                 <Link className='text-dark' to='/tai-khoan/trang-thai-cuoc-hen'>
                   Trạng thái cuộc hẹn
                 </Link>
               </Nav.Item>
-              <Nav.Item as='li' className="ps-3" eventKey="5" icon={<PersonLinesFill height={16} width={16} fill="black" className='me-2'/>}>
+              <Nav.Item as='li' className="ps-3" eventKey="7" icon={<PersonLinesFill height={16} width={16} fill="black" className='me-2'/>}>
                 <Link className='text-dark' to='/tai-khoan/gui-yeu-cau'>
                   Gửi yêu cầu
                 </Link>
               </Nav.Item>
-              <Nav.Item as='li' className="ps-3" eventKey="5" icon={<PersonLinesFill height={16} width={16} fill="black" className='me-2'/>}>
+              <Nav.Item as='li' className="ps-3" eventKey="8" icon={<PersonLinesFill height={16} width={16} fill="black" className='me-2'/>}>
                 <Link className='text-dark' to='/tai-khoan/quan-li-yeu-cau'>
                   Quản lí yêu cầu
                 </Link>
               </Nav.Item>
-              <Nav.Item as='li' className="ps-3" eventKey="5" icon={<Images height={16} width={16} fill="black" className='me-2'/>}>
+              <Nav.Item as='li' className="ps-3" eventKey="9" icon={<Images height={16} width={16} fill="black" className='me-2'/>}>
                 <Link className='text-dark' to='/tai-khoan/thu-vien'>
                   Quản lý thư viện
                 </Link>
               </Nav.Item>
-              <Nav.Item  as='li' className="ps-3" eventKey="6" icon={<ArrowReturnRight height={16} width={16} fill="black" className='me-2'/>}>
+              <Nav.Item  as='li' className="ps-3" eventKey="10" icon={<ArrowReturnRight height={16} width={16} fill="black" className='me-2'/>}>
                 <Link className='text-dark' to='/tai-khoan/dang-xuat'>
                   Đăng xuất
                 </Link>

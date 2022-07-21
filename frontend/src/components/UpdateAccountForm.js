@@ -81,19 +81,25 @@ const UpdateAccountForm = () => {
   const handleClose = () => {
     setOpen(false);
   }
-
+  const [IMG, setIMG] = useState(false);
   const handleImageSelect = () => {
+    setIMG(true);
+    ImgShow(IMG);
     dispatch(setAvatarUser(...ImagesData));
     setOpen(false);
   }
 
-  const ImgShow = () => {
-    if(avatarRedux){
+  const ImgShow = (status) => {
+    if(avatarRedux && status){
       return (<img width={200} height={200} src={avatarRedux?.path}/>)
     }
     if(User?.avatar){
       return (<img width={200} height={200} src={User?.avatar}/>)
     }
+    if(avatarRedux){
+      return (<img width={200} height={200} src={avatarRedux?.path}/>)
+    }
+    
     return (
       <>
         <Image height={60} width={60} />
@@ -117,7 +123,7 @@ const UpdateAccountForm = () => {
                           <Form.Group className='mb-3'>
                             <div className='uploadThumbnail'>
                               <div onClick={() => { handleOpenSingle() }}>
-                                <ImgShow/>
+                                {ImgShow(IMG)}
                                 </div>
                               </div>
                           </Form.Group>
@@ -129,7 +135,6 @@ const UpdateAccountForm = () => {
                 fluid
                 autoComplete="off"
                 ref={formRef}
-                onChange={setFormData}
                 onSubmit={(e) => { SubmitForm(e) }}
             >
               <Row>

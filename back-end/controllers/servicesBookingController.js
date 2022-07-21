@@ -316,17 +316,17 @@ export const deleteBooking = async (req, res) => {
         status: 400,
     }
 
-    let post_id = req.body.post_id;
+    let post_id = req.params.id;
     if(!post_id)  return res.status(201).json(response);
     try {
-        DeletedPost = await ServicesBooking.findByIdAndRemove(post_id);
+        DeletedPost = await ServicesBooking.findById(post_id);
         if(DeletedPost){
             response = {
-                title: "Lỗi xảy ra",
-                message: "Đã có lỗi xảy ra trong quá trình xóa bài đăng",
-                type: 'warning',
-                error: true,
-                status: 400,
+                title: "Thành công",
+                message: "Bạn đã xóa dữ liệu thành công",
+                type: 'success',
+                error: false,
+                status: 200,
             }
             return res.status(200).json(response);
         }

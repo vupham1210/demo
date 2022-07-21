@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
-import { Table } from 'rsuite';
+import { Table, Button } from 'rsuite';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserInforAsync, userInformation } from '../../features/user/userSlice';
 import { dataSearchSchedule, searchScheduleAsync } from '../../features/schedule/SearchSchedules';
+import swal from 'sweetalert2';
+import { AxiosInstance } from '../../features/Instance';
+
+const scheduleHandle = `${process.env.REACT_APP_SERVER_URL}/schedule`;
 
 const SchedulesHistory = () => {
     const dispatch = useDispatch();
@@ -15,6 +19,24 @@ const SchedulesHistory = () => {
         dispatch(searchScheduleAsync(UserNow?.email))
     },[dispatch])
 
+
+    const ScheduleDelete = async (data) => {
+        await AxiosInstance.delete(`${scheduleHandle}/delete/${data?._id}`)
+        .then((res) => { 
+          swal.fire({
+            title: res.data.title,
+            text: res.data.message,
+            icon: "success",
+          });
+          dispatch(searchScheduleAsync(UserNow?.email))
+        }).catch((res) => { 
+          swal.fire({
+            title: res.data.title,
+            text: res.data.message,
+            icon: "error",
+          });
+        })
+    }
 
     const TimepickCell = ({ rowData, dataKey, ...props }) => (
         <Table.Cell {...props}>
@@ -44,10 +66,10 @@ const SchedulesHistory = () => {
             >
             <Table.Column width={200} align="center" fixed>
                 <Table.HeaderCell>Name Service</Table.HeaderCell>
-                <DataBookingCell dataKey="idService" />
+                <DataBookingCell dataKey="titleService" />
             </Table.Column>
 
-            <Table.Column width={200} align="center" fixed>
+            <Table.Column width={150} align="center" fixed>
                 <Table.HeaderCell>Thời gian diễn ra</Table.HeaderCell>
                 <TimepickCell dataKey="timePick" />
             </Table.Column>
@@ -62,6 +84,20 @@ const SchedulesHistory = () => {
             <Table.Column width={150} align="center" fixed>
                 <Table.HeaderCell>Thời gian xử lí</Table.HeaderCell>
                 <CreatedAtCell dataKey="updatedAt" />
+            </Table.Column>
+            <Table.Column width={100} align="center" fixed>
+                <Table.HeaderCell>Action</Table.HeaderCell>
+                <Table.Cell>
+                {rowData => {
+                    
+                    return (
+                    <span>
+                        <a className='text-danger fw-bold' onClick={() => {ScheduleDelete(rowData)}}>Xóa</a>
+                    </span>
+                    );
+                }}
+                    
+                </Table.Cell>
             </Table.Column>
             </Table>
         </>

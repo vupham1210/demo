@@ -178,3 +178,32 @@ export const changeStatusSchedule = async (req , res) => {
     }
     res.status(400).json(response);
 }
+
+export const deleteSchedule = async (req, res) => {
+    let DeletedSchedule;
+    let response = {
+        title: "Lỗi xảy ra",
+        message: "Đã có lỗi xảy ra trong quá trình xóa bài đăng",
+        type: 'warning',
+        error: true,
+        status: 400,
+    }
+
+    let post_id = req.params.id;
+    if(!post_id)  return res.status(201).json(response);
+    try {
+        DeletedSchedule = await ScheduleBooking.findById(post_id);
+        if(DeletedSchedule){
+            response = {
+                title: "Thành công",
+                message: "Bạn đã xóa dữ liệu thành công",
+                type: 'success',
+                error: false,
+                status: 200,
+            }
+            return res.status(200).json(response);
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}

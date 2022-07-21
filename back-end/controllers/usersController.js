@@ -269,6 +269,7 @@ export const updateUser = async (req, res, next) => {
   try {
       const {
         fullname, 
+        phone,
         birth_day,
         personal_id,
         address,
@@ -278,6 +279,7 @@ export const updateUser = async (req, res, next) => {
         fullname: fullname,
         birth_day:birth_day,
         personal_id:personal_id,
+        phone: phone,
         email:email,
         address:address,
         avatar:avatar,
@@ -314,7 +316,7 @@ export const deleteUser = async (req, res, next) => {
   let user;
   if(userAdmin.role == 'admin'){
     try {
-      user = await User.findById(id);
+      user = await User.findByIdAndDelete(id);
     } catch (err) {
       console.log(err);
     }

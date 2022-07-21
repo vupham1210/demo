@@ -30,7 +30,7 @@ const userSchema = new Schema({
       type: String,
     },
     phone: {
-      type: Number,
+      type: String,
     },
     address: {
       type: String,
@@ -38,9 +38,6 @@ const userSchema = new Schema({
     role: {
       type: String,
       default: false,
-    },
-    image: {
-      type: [String],
     },
     refreshToken:{
       type: String,

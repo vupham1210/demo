@@ -10,7 +10,7 @@ import {
   deleteUser, 
   getRefreshToken,
   searchUserByEmail,
-  googleLogin
+  googleLogin,
 } from "../controllers/usersController.js";
   
 import { verifyToken } from '../helper/jwt_services.js';          
@@ -31,6 +31,7 @@ UserRouter.post("/refresh-token", getRefreshToken);
 UserRouter.patch("/update", verifyToken, imageUpload.single('avatar'), updateUser);
 UserRouter.delete("/delete/:id",verifyToken, deleteUser);
 UserRouter.post("/googlelogin",googleLogin);
+
 
 export default UserRouter; 
 

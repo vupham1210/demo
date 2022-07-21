@@ -76,7 +76,6 @@ const Login = () => {
         url: `${process.env.REACT_APP_SERVER_URL}/users/googlelogin`,
         data: { idToken: response.tokenId }
       });
-      console.log(result);
       if(result.status === 200){
         localStorage.setItem('token', result?.data.token);
         localStorage.setItem('refreshToken', result?.data.refreshToken);
@@ -89,7 +88,7 @@ const Login = () => {
     }
   }
   const responseGoogleError = (response) => { 
-    console.log(response)
+    
   }
 
   return (

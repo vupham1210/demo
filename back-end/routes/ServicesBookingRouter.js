@@ -17,7 +17,7 @@ BookingRouter.get('/', verifyToken , getBooking);
 BookingRouter.post('/get' , getBookingBySlug);
 BookingRouter.post('/add', verifyToken, addBooking);
 BookingRouter.patch('/update' , verifyToken, updateBooking);
-BookingRouter.patch('/delete' , verifyToken, deleteBooking);
+BookingRouter.delete('/delete/:id' , verifyToken, deleteBooking);
 
 BookingRouter.get('/:iduser',getBookingByIDUser);
 BookingRouter.get('/booking/:id', verifyToken,getBookingByID);

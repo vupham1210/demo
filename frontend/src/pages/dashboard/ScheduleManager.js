@@ -174,14 +174,18 @@ const ScheduleManager = () =>  {
                     <Container>
                         <Row>
                             <Col lg={12}>
-                            <h3>Thông tin lich hen</h3>
-                            { booking ? booking.title : ''}
-                            
+                            <h3>Thông tin lịch hẹn</h3>
+                            <div>
+                                <h5>{ booking ? booking.title : ''}</h5>
+                                <h6>Khung giờ của lịch hẹn được đặt là: {schedulehandle.timePick.timeStart} - {schedulehandle.timePick.timeEnd}</h6>
+                            </div>
                             <h3>Thông tin người đặt</h3>
                             { schedulehandle.ortherInfo ? 
                                 Object.values(schedulehandle.ortherInfo).map((val, index) => {
                                     return(  
-                                        <p key={index}>{`${val.label}: ${val.value}`}</p> 
+                                        <>
+                                            <p key={index}><strong>{val.label}</strong>:  {val.value}</p>
+                                        </>
                                     )
                                 })
                               : ''  

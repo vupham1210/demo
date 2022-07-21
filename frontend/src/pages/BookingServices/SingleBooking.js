@@ -115,7 +115,7 @@ const SingleBooking = () => {
                 <Container>
                     <Row>
                         <Col xs={12}> 
-                        <p>Khung giờ bạn chọn là {inforBooking.timePick.timeStart} - {inforBooking.timePick.timeEnd} vào ngày {inforBooking?.inforBooking.createdAt ? format(new Date(inforBooking.inforBooking.createdAt), 'dd/MM/yyyy') : ''}</p>
+                        <p>Khung giờ bạn chọn là {inforBooking.timePick.timeStart} - {inforBooking.timePick.timeEnd} vào ngày {inforBooking?.inforBooking.createdAt ? format(new Date(inforBooking?.inforBooking.createdAt), 'dd/MM/yyyy') : ''}</p>
                         <p> Điền vào thông tin bên dưới để được hẹn lịch với chúng tôi</p>
                         </Col>
                         <Col xs={12}>
@@ -185,23 +185,25 @@ const SingleBooking = () => {
     if(SingleData){
         return (
             <>
-            <Row>
+            <Row className='my-5'>
                 <Col xs={6}>
                     <Card>
                         <Card.Header>
                             {
-                                SingleData.thumbnail ? <img className='w-100' src={SingleData.thumbnail.path} /> : ''
+                                SingleData.thumbnail ? <img className='w-50 d-block m-auto mb-3' src={SingleData.thumbnail.path} /> : ''
                             }
                             
-                            <h3>{SingleData.title}</h3>
+                            <h4>{SingleData.title}</h4>
                             <p>
                                 <Clock width={20} height={20}  fill={'black'}/>
-                                { format(new Date(SingleData.startDate), 'dd/MM/yyyy') }
+                                { SingleData.startDate ? format(new Date(SingleData.startDate), 'dd/MM/yyyy') : ''}
+
+                                {SingleData.startEnd ? <span>
+                                     -     
+                                { SingleData.startEnd ? format(new Date(SingleData.startEnd), 'dd/MM/yyyy') : ''}
+                            </span> : ''}
                             </p>
-                            {SingleData.endDate ? <p>
-                                <Clock width={20} height={20}  fill={'black'}/>
-                                {SingleData.endDate}
-                            </p> : ''}
+                            
                             
                         </Card.Header>
                         <Card.Body>

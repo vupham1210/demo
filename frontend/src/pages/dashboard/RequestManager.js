@@ -9,6 +9,7 @@ import { AxiosInstance } from '../../features/Instance';
 import Swal from "sweetalert2";
 
 const urlContactHandle = `${process.env.REACT_APP_SERVER_URL}/contact`;
+const urlUserHandle = `${process.env.REACT_APP_SERVER_URL}/users`;
 
 const RequestManager = () =>  {
     const dispatch = useDispatch();
@@ -21,7 +22,7 @@ const RequestManager = () =>  {
     },[dispatch])
 
     
-    //Change Role User
+    //Change Role Contact
     const changeStatusContact = async (id,status) =>{
         await AxiosInstance.patch(`${urlContactHandle}/change/${id}?status=${status}`)
         .then((res) => { 
@@ -29,15 +30,25 @@ const RequestManager = () =>  {
                 text: `${res.data.message}`,
                 icon: "success",
             });
-        dispatch(getContactAsync('idReceive'))
+            setOpen(false);
+            dispatch(getContactAsync('idReceive'))
         }).catch((res) => { 
+            setOpen(false);
             Swal.fire({
-                text: res.message,
+                text: res.data.message,
                 icon: "error",
             });
         })
     }
-    
+    const [userHandle,setUserHandle] = useState();
+    //Get User 
+    const getUserHandle = async (id) =>{
+        await AxiosInstance.get(`${urlUserHandle}/userhandle/${id}`)
+        .then((res) => { 
+            setUserHandle(res.data);
+        }).catch((error) => { console.log(error); })
+    }
+
     const CreatedAtCell = ({ rowData, dataKey, ...props }) => (
         <Table.Cell {...props}>
           { format(new Date(rowData[dataKey]), 'HH:mm, dd/MM/yyyy') }
@@ -92,7 +103,25 @@ const RequestManager = () =>  {
                 {
                     <Container>
                         <Row>
-                            <Col lg={12}>
+                            <Col lg={6}>
+                                {
+                                    userHandle ?
+                                    (
+                                        <>
+                                            <div className="card">
+                                                {userHandle?.avatar ? <img src={userHandle?.avatar} className="card-img-top"/> : ''}
+                                                <div className="card-body">
+                                                    <h5 className="card-title">Thông tin người gửi</h5>
+                                                    <p className="card-text"><strong>Tên người gửi: </strong> {userHandle?.fullname}</p>
+                                                    <p className="card-text"><strong>Email: </strong> {userHandle?.email}</p>
+                                                </div>
+                                            </div>
+                                        </>
+                                    ) : ''
+                                }
+                            </Col>
+                            <Col lg={6}>
+                                <h5>Nội dung yêu cầu:</h5>
                                 {contactHandle.content}
                             </Col>
                         </Row>
@@ -144,6 +173,7 @@ const RequestManager = () =>  {
                     
                     const handleModalRow = (rowData) => {
                         openModalView(rowData);
+                        getUserHandle(rowData?.idSend);
                     }
                     
                     return (
