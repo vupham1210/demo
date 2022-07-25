@@ -1,6 +1,7 @@
 import { ServicesBooking } from '../model/Posts.js';
 import slugify from 'slugify';
 import uniqueSlug from 'unique-slug';
+import { ScheduleBooking } from '../model/Schedule.js';
 
 export const getBookingBySlug = async (req, res) => {
     let response = {
@@ -320,6 +321,10 @@ export const deleteBooking = async (req, res) => {
     if(!post_id)  return res.status(201).json(response);
     try {
         DeletedPost = await ServicesBooking.findById(post_id);
+        let listBookings = await ScheduleBooking.find({idService: post_id});
+        listBookings.map(async (booking) =>{
+            await ScheduleBooking.findByIdAndUpdate(booking._id,{status: 'pending'});
+        })
         if(DeletedPost){
             response = {
                 title: "Thành công",

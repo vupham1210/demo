@@ -22,7 +22,7 @@ const ScheduleSchema = new Schema({
     status: {
         type: String,
         required: true,
-        enum: ['pending', 'success', 'fail'], 
+        enum: ['pending', 'success', 'fail', 'deleted'], 
         default: 'pending'
     },
     ortherInfo: {
