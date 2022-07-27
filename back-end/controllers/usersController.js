@@ -139,6 +139,7 @@ export const changeRoleUser = async (req,res,next) =>{
     try{
       const updateUser = await User.findByIdAndUpdate(req.params.id,{
         role: req.query.role,
+        typeU : req.query.typeU,
       });
       return res.status(200).json(updateUser);
     }catch (err) {

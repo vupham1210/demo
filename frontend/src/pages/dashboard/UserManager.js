@@ -47,14 +47,15 @@ const UserManager = () => {
   }
 
   //Change Role User
-  const changeRoleUser = async (id,role) =>{
-    await AxiosInstance.patch(`${urlUserHandle}/userhandle/${id}?role=${role}`)
+  const changeRoleUser = async (id,role,typeU) =>{
+    await AxiosInstance.patch(`${urlUserHandle}/userhandle/${id}?role=${role}&typeU=${typeU}`)
     .then((res) => { 
       swal.fire({
         text: res.username+ "Đã được cập nhật",
         icon: "success",
         type: "success"
       });
+      handleClose();
       dispatch(getVendorsInforAsync())
       dispatch(getSubscribersInforAsync())
     }).catch((res) => { 
@@ -78,8 +79,8 @@ const UserManager = () => {
     setOpen(false);
   }
 
-  const handleOpenChange = (data,role) => {
-    changeRoleUser(data,role);
+  const handleOpenChange = (data,role,typeU) => {
+    changeRoleUser(data,role,typeU);
   };
 
   const handleOpenDelete = (data) => {
@@ -120,6 +121,26 @@ const UserManager = () => {
             </Col>
           </Row>
         </Modal.Body>
+        <Modal.Footer>
+          {userhandle.role === 'vendor'
+          ? <Button variant='warning' 
+          className='me-2' 
+          onClick={() =>{handleOpenChange(userhandle._id,'subscriber')}} 
+          appearance="subtle">
+          Hủy Vendor
+          </Button>
+          : <>
+            <Button variant='success' className='me-2' onClick={() =>{handleOpenChange(userhandle._id,'vendor','normal')}} appearance="subtle">
+                          Chuyển Vendor Normal
+                        </Button>
+                        <Button variant='success' className='me-2' onClick={() =>{handleOpenChange(userhandle._id,'vendor','vip')}} appearance="subtle">
+                          Chuyển Vendor Vip
+                        </Button>
+          </>}
+          <Button variant='danger' className='me-2' onClick={handleClose} appearance="subtle">
+            Đóng
+          </Button>
+        </Modal.Footer>
       </>
     )
   }
@@ -151,12 +172,7 @@ const UserManager = () => {
                         appearance="subtle">
                           Xem thông tin
                         </Button>
-                        <Button variant='warning' 
-                        className='me-2' 
-                        onClick={() =>{handleOpenChange(val._id,'subscriber')}} 
-                        appearance="subtle">
-                        Hủy Vendor
-                        </Button>
+                        
                         <Button variant='danger' 
                         className='me-2' 
                         onClick={() =>{handleOpenDelete(val._id)}} 
@@ -192,9 +208,7 @@ const UserManager = () => {
                         <Button variant='primary' className='me-2' onClick={() =>{handleOpenSingle(val)}} appearance="subtle">
                           Xem thông tin
                         </Button>
-                        <Button variant='success' className='me-2' onClick={() =>{handleOpenChange(val._id,'vendor')}} appearance="subtle">
-                          Chuyển Vendor
-                        </Button>
+                        
                         <Button variant='danger' 
                         className='me-2' 
                         onClick={() =>{handleOpenDelete(val._id)}} 
@@ -210,11 +224,7 @@ const UserManager = () => {
           </Table>
           <Modal size={'md'} open={open} onClose={handleClose} aria-labelledby="contained-modal-title-vcenter" centered="true">
               <UserView data={userData}/>
-              <Modal.Footer>
-                <Button variant='danger' className='me-2' onClick={handleClose} appearance="subtle">
-                  Đóng
-                </Button>
-              </Modal.Footer>
+              
           </Modal>
   </div>
   )

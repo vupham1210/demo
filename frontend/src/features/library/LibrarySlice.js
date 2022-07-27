@@ -21,6 +21,13 @@ export const loadLibraryAsync = createAsyncThunk(
     }).catch(function (error) {
       console.log(error);
     });
+    if(response?. type === 'error'){
+      Swal.fire(
+        response.type,
+        response.message,
+        response.title,
+      )
+    }
     return response;
   }
 );

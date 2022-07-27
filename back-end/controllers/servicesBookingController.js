@@ -2,6 +2,7 @@ import { ServicesBooking } from '../model/Posts.js';
 import slugify from 'slugify';
 import uniqueSlug from 'unique-slug';
 import { ScheduleBooking } from '../model/Schedule.js';
+import { User } from '../model/User.js';
 
 export const getBookingBySlug = async (req, res) => {
     let response = {
@@ -216,7 +217,23 @@ export const addBooking = async (req, res) => {
         var randomSlug = uniqueSlug();
 
         slug = slug + '-' + randomSlug;
-        
+
+        const userAdd = await User.findById(req.userId.user_id);
+        const postcreated = await ServicesBooking.find({author: req.userId.user_id});
+        if( userAdd?.typeU === 'normal' || userAdd?.typeU === 'vip'){
+            let sllPost =  Object.keys(postcreated).length;
+            if( (userAdd?.typeU === 'normal' && sllPost >= 2) || (userAdd?.typeU === 'vip' && sllPost >= 4) ){
+                response = {
+                    title: "Lỗi xảy ra", 
+                    message: "Bạn đã tạo đủ số lượng lịch",
+                    type: 'warning',
+                    error: true,
+                    status: 201,
+                };
+                return res.status(200).json(response);
+            }
+        }
+
         bookingservices = new ServicesBooking({
             slug: slug,
             title: req.body.title,
@@ -260,7 +277,7 @@ export const addBooking = async (req, res) => {
         return res.status(400).json(response);
     }
     return res.status(201).json(response);
-}
+} 
 
 export const updateBooking = (req, res) => {
     res.status(200).json({ status: 'updateBooking'});

@@ -39,6 +39,9 @@ const userSchema = new Schema({
       type: String,
       default: false,
     },
+    typeU: {
+      type: String,
+    },
     refreshToken:{
       type: String,
     }

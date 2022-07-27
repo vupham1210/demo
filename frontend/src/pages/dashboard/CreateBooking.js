@@ -18,8 +18,7 @@ import { setThumbnail,
          setTitle,
          setDatePicker,
          setLocation,
-         addField,
-         removeField,
+         setFormDataDefault,
         } from '../../features/booking/BookingForm';
 
 import { imagesSelected } from '../../features/library/LibrarySlice';
@@ -349,25 +348,6 @@ const CreateBooking = () => {
       return newData;
   }, []);
 
-  const typeInputData = [
-    {
-      "label": "Văn bản ngắn",
-      "value": "text",
-    },
-    {
-      "label": "Văn bản dài",
-      "value": "textarea",
-    },
-    {
-      "label": "Số",
-      "value": "number",
-    },
-    {
-      "label": "Email",
-      "value": "email",
-    },
-  ];
-
   const SubmitDataField = (e) => {
     
     const data = new FormData(FormAddFielRef.current.root);
@@ -443,29 +423,23 @@ const CreateBooking = () => {
       description: 'demo',
       thumbnail: formData.thumbnail ? formData.thumbnail : '',
       gallery: formData.gallery ? formData.gallery : [],
-      postIn: new Date(),
       status: 'pending',
       // Booking Post
       time: formData.time ? formData.time : [],
-      location: formData.time.location ? formData.time.location : '',
-      startDate: formData.startDate ? formData.startDate : '',
+      location: formData.location ? formData.location : '',
+      startDate: formData.startDate ? formData.startDate : new Date(),
       startEnd: formData.endDate ? formData.endDate : '',
       customfield: FormList ? FormList : [],
     }
 
-    const data = new FormData(e.target);
-
-    console.log(data);
 
     if (!formRef.current.check()) {
       toaster.push(<Message showIcon type="error">Một hoặc nhiều trường bị thiếu thông tin</Message>);
       return;
     }
 
-    toaster.push(<Message showIcon type="success">Đang gửi dữ liệu</Message>);
-
+    dispatch(setFormDataDefault());  
     dispatch(createBookingAsync(form));
-    
   }
 
   return (
@@ -546,7 +520,7 @@ const CreateBooking = () => {
                               format="dd/MM/yyyy" 
                               className='w-100' 
                               disabledDate={beforeToday()}
-                              errorMessage={'Ngày nhập vào không chính xác'}
+                              errormessage={'Ngày nhập vào không chính xác'}
                               onChange={(e) => { addDate(e, false) }}
                               defaultValue={ formData.startDate ? formData.startDate : new Date()}
                             /> 
@@ -555,7 +529,7 @@ const CreateBooking = () => {
                               format="dd/MM/yyyy" 
                               className='w-100'
                               disabledDate={beforeToday()}
-                              errorMessage={'Ngày nhập vào không chính xác'}
+                              errormessage={'Ngày nhập vào không chính xác'}
                               onChange={(e) => { addDate(e, true) }}
                               defaultValue={ formData.startDate ? [formData.startDate, formData.endDate] : [new Date(), new Date()]}
                             />
@@ -574,10 +548,14 @@ const CreateBooking = () => {
                           <h4 className='mb-3'>Các trường yêu cầu</h4>
                             <List bordered sortable onSort={handleSortEnd}>
                                 {FormList.map((val, index) => (
-                                  <List.Item key={val.key} index={index} collection={1}>
+                                  <List.Item key={val?.key} index={index} collection={1}>
                                     <div className='d-flex justify-content-between align-items-center'>
-                                    {val.name}
-                                    <Button  onClick={() => DeleteField(index)}>Xóa Trường</Button>
+                                    {val?.name}
+                                      { (FormList.length > 1) ?
+                                          <Button  onClick={() => DeleteField(index)}>Xóa Trường</Button>
+                                          : ''
+                                      }
+                                    
                                     </div>
                                   </List.Item>
                                 ))}

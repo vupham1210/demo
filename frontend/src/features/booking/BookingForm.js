@@ -9,7 +9,6 @@ const initialState = {
   status: 'idle',
   formData: {
     thumbnail: '',
-    gallery: [],
     title: '',
     description:'',
     content: '',
@@ -20,6 +19,26 @@ const initialState = {
     time: []
   },
 }
+
+const FormList = [
+  {
+    name: 'Họ và tên',
+    key: 'fullname',
+    type: 'text'
+  },{
+    name: 'Địa chỉ Email',
+    key: 'email',
+    type: 'email'
+  },{
+    name: 'Số điện thoại',
+    key: 'phone',
+    type: 'text'
+  },{
+    name: 'Địa chỉ',
+    key: 'address',
+    type: 'text'
+  }
+];
 
 // create Booking Async
 export const createBookingAsync = createAsyncThunk(
@@ -44,6 +63,19 @@ export const bookingSlice = createSlice({
   name: 'createbooking',
   initialState,
   reducers: {
+    setFormDataDefault : (state, action) => {
+      state.formData  = {
+        title: '',
+        content: '',
+        description: '',
+        thumbnail: '',
+        // Booking Post
+        time: [],
+        location: '',
+        startDate: new Date(),
+        customfield: FormList,
+      }
+    },
     setThumbnail: (state, action) => {
       state.formData.thumbnail = action.payload;
     },
@@ -137,6 +169,7 @@ export const bookingSlice = createSlice({
 })
 
 export const { 
+              setFormDataDefault,
               setThumbnail,
               setGallery,
               addFormData,

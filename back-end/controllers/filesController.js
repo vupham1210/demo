@@ -51,7 +51,6 @@ export const uploadSingle = async (req, res, next) => {
         message: "Bạn không thể tiếp tục thêm ảnh",
         type: 'error',
         error: true,
-        author: author.user_id ? author.user_id : 'không xác định',
       }
       return res.status(200).json(response)
     }
