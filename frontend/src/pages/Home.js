@@ -9,7 +9,7 @@ const Home = () => {
           <div className="wrapper">
             <div className="inner">
                 <div className="company-name ">
-                  Vu Pham Booking
+                  Event Booking
                 </div>
                 <div className="bar">
                   <a className="btn book custom" href="#book">Book Now</a>

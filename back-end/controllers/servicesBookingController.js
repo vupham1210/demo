@@ -337,7 +337,7 @@ export const deleteBooking = async (req, res) => {
     let post_id = req.params.id;
     if(!post_id)  return res.status(201).json(response);
     try {
-        DeletedPost = await ServicesBooking.findById(post_id);
+        DeletedPost = await ServicesBooking.findByIdAndRemove(post_id);
         let listBookings = await ScheduleBooking.find({idService: post_id});
         listBookings.map(async (booking) =>{
             await ScheduleBooking.findByIdAndUpdate(booking._id,{status: 'pending'});
