@@ -16,11 +16,11 @@ const BookingGig = ({ booking }) => {
             <Link to={`/booking/${booking.slug}`}>
               <h3>{booking.title}</h3>
             </Link>}>
-          <p>
+          {/* <p>
             <small>
               {booking.description}
             </small>
-          </p>
+          </p> */}
         </Panel>
       </Panel>
       : ''
